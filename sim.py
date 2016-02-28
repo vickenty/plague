@@ -145,11 +145,12 @@ class Cell(object):
         self.sick -= expired
         return expired
 
-m = Map()
-m.populate()
+if __name__ == '__main__':
+    m = Map()
+    m.populate()
 
-while 1:
-    m.update()
-    print ""
-    m.draw()
-    raw_input()
+    while 1:
+        m.update()
+        print ""
+        m.draw()
+        raw_input()
