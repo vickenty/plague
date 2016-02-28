@@ -62,6 +62,9 @@ class Map(object):
             print "\t",
             for x in range(0, self.width):
                 print "%.02f" % self.grid[x, y].sick,
+            print "\t",
+            for x in range(0, self.width):
+                print "%.02f" % self.grid[x, y].dead,
             print
 
     def update(self):
@@ -70,6 +73,7 @@ class Map(object):
         for x in range(0, self.width):
             for y in range(0, self.height):
                 curr = self.grid[x, y]
+                curr.expire()
                 curr.infect()
                 for n in self.neighbours(curr):
                     moving_healthy = n.attract * curr.healthy
@@ -106,7 +110,7 @@ class Cell(object):
         self.y = y
         self.healthy = 1000 if cell_type == TYPE_CITY else 0
         self.sick = 1 if cell_type == TYPE_CITY else 0
-        self.dead = 42
+        self.dead = 0
         self.type = cell_type
         self.attract = self.type2attract[cell_type]
         self.is_blocked = False
@@ -134,6 +138,12 @@ class Cell(object):
         self.sick += infected
         self.healthy -= infected
         return infected
+
+    def expire(self):
+        expired = self.sick * 0.2
+        self.dead += expired
+        self.sick -= expired
+        return expired
 
 m = Map()
 m.populate()
