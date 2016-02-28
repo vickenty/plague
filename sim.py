@@ -1,0 +1,129 @@
+TYPE_ROAD = 1
+TYPE_CITY = 2
+TYPE_FIELD = 3
+
+import os
+import math
+import sys
+from collections import defaultdict
+
+
+class Map(object):
+    diffuse = 0.01
+
+    def __init__(self):
+        self.height = 5
+        self.width = 5
+        self.grid = {}
+
+    def populate(self):
+        for x in range(0, self.width):
+            for y in range(0, self.height):
+                self.grid[x, y] = Cell(x, y, TYPE_FIELD)
+
+        self.grid[0, 0] = Cell(0, 0, TYPE_CITY)
+
+        x, y = self.width-1, self.height-1
+        self.grid[x, y] = Cell(x, y, TYPE_CITY)
+        self.grid[x, y].healthy = 0
+
+        for x in range(1, self.width):
+            self.grid[x, 0] = Cell(x, 0, TYPE_ROAD)
+
+        for y in range(1, self.height-1):
+            self.grid[self.width-1, y] = Cell(self.width-1, y, TYPE_ROAD)
+
+        self.grid[3, 0].block()
+
+    def neighbours_coordinates(self, x, y):
+        res = []
+        if x+1 < self.width:
+            res.append((x+1, y))
+        if x-1 >= 0:
+            res.append((x-1, y))
+        if y+1 < self.height:
+            res.append((x, y+1))
+        if y-1 >= 0:
+            res.append((x, y-1))
+        return res
+
+    def neighbours(self, other):
+        n = self.neighbours_coordinates(other.x, other.y)
+        return filter(lambda c: not self.grid[c.x, c.y].is_blocked, map(lambda c: self.grid[c], n))
+
+    def draw(self):
+        for y in range(0, self.height):
+            for x in range(0, self.width):
+                #print "%s" % self.grid[x, y].char,
+                print "%.02f" % self.grid[x, y].healthy,
+            print
+
+    def update(self):
+        buf = defaultdict(lambda: 0)
+        for x in range(0, self.width):
+            for y in range(0, self.height):
+                for n in self.neighbours(self.grid[x, y]):
+                    curr = self.grid[x, y]
+                    moving = n.attract * curr.healthy
+                    if x == 0 and y == 0 and n.x == 1 and n.y == 0:
+                        print "Leaving the city: %.2f" % moving
+                    if x == 1 and y == 0 and n.x == 0 and n.y == 0:
+                        print "Leaving into the city: %.2f" % moving
+                    buf[curr] -= moving
+                    buf[n] += moving
+        for c, moving in buf.items():
+            c.healthy += moving
+                    #print "From %s to %s: %d" % ((x, y), (n.x, n.y), moving)
+                # max(attract, 10)*sqrt(min(src-dst, 0))+(src*diffuse)
+
+                # (src - dst) * attract
+                # (42 - 42) * 0.1 = 0
+                # (1 - 1) * 0.1 = 0
+                # (42 - 0) * 0.1 = 42 * .1
+                # (1 - 42) * 0.1 = 41 * .1
+        # compute neighbours
+        # compute number of people leaving current cell
+        # compute deaths
+        # compute infections
+
+
+class Cell(object):
+    chars = {
+        TYPE_CITY: "o",
+        TYPE_ROAD: "=",
+        TYPE_FIELD: "_",
+    }
+
+    type2attract = {
+        TYPE_CITY: 0.2,
+        TYPE_ROAD: 0.05,
+        TYPE_FIELD: 0.01,
+    }
+
+    def __init__(self, x, y, cell_type):
+        self.x = x
+        self.y = y
+        self.healthy = 1000 if cell_type == TYPE_CITY else 0
+        self.sick = 42
+        self.dead = 42
+        self.type = cell_type
+        self.char = self.chars[cell_type]
+        self.attract = self.type2attract[cell_type]
+        self.is_blocked = False
+
+    def block(self):
+        self.char = "x"
+        self.is_blocked = True
+
+    def unblock(self):
+        self.char = self.chars[self.type]
+        self.is_blocked = False
+
+m = Map()
+m.populate()
+
+while 1:
+    m.update()
+    print ""
+    m.draw()
+    raw_input()
