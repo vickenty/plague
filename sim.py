@@ -123,9 +123,9 @@ class Cell(object):
         return self.chars[self.type]
 
     def infect(self):
-        if self.healthy == 0.0 or self.sick == 0.0:
+        if self.healthy == 0.0:
             return 0.0
-        ratio = self.sick / self.healthy / 100
+        ratio = (self.sick + self.dead) / self.healthy / 100
         if ratio == 0.0:
             return 0.0
         infection_probability = min(0.1, ratio)
