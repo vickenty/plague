@@ -6,7 +6,7 @@ import os
 import math
 import sys
 from collections import defaultdict
-from random import randint
+from random import randint, random
 
 
 class Map(object):
@@ -56,16 +56,21 @@ class Map(object):
         for y in range(0, self.height):
             for x in range(0, self.width):
                 #print "%s" % self.grid[x, y].char,
+                print "%.02f" % self.grid[x, y].healthy,
+            print "\t",
+            for x in range(0, self.width):
                 print "%.02f" % self.grid[x, y].sick,
             print
 
     def update(self):
+
         buf_healthy = defaultdict(lambda: 0)
         buf_sick = defaultdict(lambda: 0)
         for x in range(0, self.width):
             for y in range(0, self.height):
-                for n in self.neighbours(self.grid[x, y]):
-                    curr = self.grid[x, y]
+                curr = self.grid[x, y]
+                curr.infect()
+                for n in self.neighbours(curr):
                     moving_healthy = n.attract * curr.healthy
                     moving_sick = n.attract * curr.sick
                     if x == 0 and y == 0 and n.x == 1 and n.y == 0:
@@ -111,7 +116,7 @@ class Cell(object):
         self.x = x
         self.y = y
         self.healthy = 1000 if cell_type == TYPE_CITY else 0
-        self.sick = randint(1, 5) if cell_type == TYPE_CITY else 0
+        self.sick = 1 if cell_type == TYPE_CITY else 0
         self.dead = 42
         self.type = cell_type
         self.char = self.chars[cell_type]
@@ -125,6 +130,19 @@ class Cell(object):
     def unblock(self):
         self.char = self.chars[self.type]
         self.is_blocked = False
+
+    def infect(self):
+        if self.healthy == 0.0 or self.sick == 0.0:
+            return 0.0
+        ratio = self.sick / self.healthy / 100
+        if ratio == 0.0:
+            return 0.0
+        infection_probability = min(0.1, ratio)
+        infected = self.healthy * infection_probability
+        assert infected < self.healthy
+        self.sick += infected
+        self.healthy -= infected
+        return infected
 
 m = Map()
 m.populate()
