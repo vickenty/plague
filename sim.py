@@ -6,6 +6,7 @@ import os
 import math
 import sys
 from collections import defaultdict
+from random import randint
 
 
 class Map(object):
@@ -55,25 +56,31 @@ class Map(object):
         for y in range(0, self.height):
             for x in range(0, self.width):
                 #print "%s" % self.grid[x, y].char,
-                print "%.02f" % self.grid[x, y].healthy,
+                print "%.02f" % self.grid[x, y].sick,
             print
 
     def update(self):
-        buf = defaultdict(lambda: 0)
+        buf_healthy = defaultdict(lambda: 0)
+        buf_sick = defaultdict(lambda: 0)
         for x in range(0, self.width):
             for y in range(0, self.height):
                 for n in self.neighbours(self.grid[x, y]):
                     curr = self.grid[x, y]
-                    moving = n.attract * curr.healthy
+                    moving_healthy = n.attract * curr.healthy
+                    moving_sick = n.attract * curr.sick
                     if x == 0 and y == 0 and n.x == 1 and n.y == 0:
-                        print "Leaving the city: %.2f" % moving
+                        print "Leaving the city: %.2f" % moving_sick
                     if x == 1 and y == 0 and n.x == 0 and n.y == 0:
-                        print "Leaving into the city: %.2f" % moving
-                    buf[curr] -= moving
-                    buf[n] += moving
-        for c, moving in buf.items():
+                        print "Leaving into the city: %.2f" % moving_sick
+                    buf_healthy[curr] -= moving_healthy
+                    buf_sick[curr] -= moving_sick
+                    buf_healthy[n] += moving_healthy
+                    buf_sick[n] += moving_sick
+        for c, moving in buf_healthy.items():
             c.healthy += moving
-                    #print "From %s to %s: %d" % ((x, y), (n.x, n.y), moving)
+        for c, moving in buf_sick.items():
+            c.sick += moving
+                #print "From %s to %s: %d" % ((x, y), (n.x, n.y), moving)
                 # max(attract, 10)*sqrt(min(src-dst, 0))+(src*diffuse)
 
                 # (src - dst) * attract
@@ -104,7 +111,7 @@ class Cell(object):
         self.x = x
         self.y = y
         self.healthy = 1000 if cell_type == TYPE_CITY else 0
-        self.sick = 42
+        self.sick = randint(1, 5) if cell_type == TYPE_CITY else 0
         self.dead = 42
         self.type = cell_type
         self.char = self.chars[cell_type]
