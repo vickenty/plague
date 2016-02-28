@@ -10,8 +10,6 @@ from random import randint, random
 
 
 class Map(object):
-    diffuse = 0.01
-
     def __init__(self):
         self.height = 5
         self.width = 5
@@ -22,6 +20,8 @@ class Map(object):
             for y in range(0, self.height):
                 self.grid[x, y] = Cell(x, y, TYPE_FIELD)
 
+        # build two cities in the top-left and bottom-right
+        # corners
         self.grid[0, 0] = Cell(0, 0, TYPE_CITY)
 
         x, y = self.width-1, self.height-1
@@ -31,9 +31,11 @@ class Map(object):
         for x in range(1, self.width):
             self.grid[x, 0] = Cell(x, 0, TYPE_ROAD)
 
+        # connect the two cities with a road
         for y in range(1, self.height-1):
             self.grid[self.width-1, y] = Cell(self.width-1, y, TYPE_ROAD)
 
+        # block a semi-random road cell
         self.grid[3, 0].block()
 
     def neighbours_coordinates(self, x, y):
@@ -55,7 +57,7 @@ class Map(object):
     def draw(self):
         for y in range(0, self.height):
             for x in range(0, self.width):
-                #print "%s" % self.grid[x, y].char,
+                #print "%s" % self.grid[x, y].char(),
                 print "%.02f" % self.grid[x, y].healthy,
             print "\t",
             for x in range(0, self.width):
@@ -63,7 +65,6 @@ class Map(object):
             print
 
     def update(self):
-
         buf_healthy = defaultdict(lambda: 0)
         buf_sick = defaultdict(lambda: 0)
         for x in range(0, self.width):
@@ -73,10 +74,10 @@ class Map(object):
                 for n in self.neighbours(curr):
                     moving_healthy = n.attract * curr.healthy
                     moving_sick = n.attract * curr.sick
-                    if x == 0 and y == 0 and n.x == 1 and n.y == 0:
-                        print "Leaving the city: %.2f" % moving_sick
-                    if x == 1 and y == 0 and n.x == 0 and n.y == 0:
-                        print "Leaving into the city: %.2f" % moving_sick
+                    #if x == 0 and y == 0 and n.x == 1 and n.y == 0:
+                    #    print "Leaving the city: %.2f" % moving_sick
+                    #if x == 1 and y == 0 and n.x == 0 and n.y == 0:
+                    #    print "Leaving into the city: %.2f" % moving_sick
                     buf_healthy[curr] -= moving_healthy
                     buf_sick[curr] -= moving_sick
                     buf_healthy[n] += moving_healthy
@@ -85,18 +86,6 @@ class Map(object):
             c.healthy += moving
         for c, moving in buf_sick.items():
             c.sick += moving
-                #print "From %s to %s: %d" % ((x, y), (n.x, n.y), moving)
-                # max(attract, 10)*sqrt(min(src-dst, 0))+(src*diffuse)
-
-                # (src - dst) * attract
-                # (42 - 42) * 0.1 = 0
-                # (1 - 1) * 0.1 = 0
-                # (42 - 0) * 0.1 = 42 * .1
-                # (1 - 42) * 0.1 = 41 * .1
-        # compute neighbours
-        # compute number of people leaving current cell
-        # compute deaths
-        # compute infections
 
 
 class Cell(object):
@@ -119,17 +108,19 @@ class Cell(object):
         self.sick = 1 if cell_type == TYPE_CITY else 0
         self.dead = 42
         self.type = cell_type
-        self.char = self.chars[cell_type]
         self.attract = self.type2attract[cell_type]
         self.is_blocked = False
 
     def block(self):
-        self.char = "x"
         self.is_blocked = True
 
     def unblock(self):
-        self.char = self.chars[self.type]
         self.is_blocked = False
+
+    def char(self):
+        if self.is_blocked:
+            return "x"
+        return self.chars[self.type]
 
     def infect(self):
         if self.healthy == 0.0 or self.sick == 0.0:
