@@ -130,7 +130,7 @@ class Cell(object):
         self.pop = pop.infect(min(0.1, ratio))
 
     def expire(self):
-        self.pop = self.pop.kill(0.2)
+        self.pop = self.pop.kill(0.002)
 
 
 if __name__ == '__main__':
