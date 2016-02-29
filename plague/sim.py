@@ -62,28 +62,33 @@ class Map(object):
     ]
 
     def update(self):
-        buf = defaultdict(lambda: Population(0.0))
         moving = Population(0.0)
         x, y = next(self.order_iter)
         curr = self.grid[x, y]
+
         curr.update()
-        for dx, dy in self.directions:
-            nx, ny = curr.x + dx, curr.y + dy
-            if nx < 0 or nx >= self.width or ny < 0 or ny >= self.height:
-                continue
 
-            n = self.grid[nx, ny]
-            if n.is_blocked:
-                continue
+        cpop = curr.pop
+        tpop = cpop.good + cpop.sick + cpop.dead
 
-            cpop = curr.pop
-            if cpop.good + cpop.sick + cpop.dead > 0:
-                attract_coef = min(0.25, n.attract * (1.0 + 100 * cpop.dead / (cpop.good + cpop.sick + cpop.dead)))
+        if tpop > 0:
+            for dx, dy in self.directions:
+                nx, ny = curr.x + dx, curr.y + dy
+                if nx < 0 or nx >= self.width or ny < 0 or ny >= self.height:
+                    continue
+
+                n = self.grid[nx, ny]
+                if n.is_blocked:
+                    continue
+
+                attract_coef = min(0.25, n.attract * (1.0 + 100 * cpop.dead / tpop))
                 moving.good = attract_coef * curr.pop.good
                 moving.sick = attract_coef * curr.pop.sick
 
                 curr.pop -= moving
                 n.pop += moving
+
+        return x, y
 
 class Cell(object):
     chars = {

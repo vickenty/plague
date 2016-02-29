@@ -7,9 +7,12 @@ class Renderer (object):
     def draw(self, m, surf):
         for x in xrange(0, m.width):
             for y in xrange(0, m.height):
-                rect = (x * 16, y * 16, 14, 14)
-                color = self.get_color(m.grid[x, y])
-                surf.fill(color, rect)
+                self.draw_one(m, x, y, surf)
+
+    def draw_one(self, m, x, y, surf):
+        rect = (x * 16, y * 16, 14, 14)
+        color = self.get_color(m.grid[x, y])
+        surf.fill(color, rect)
 
     def get_color(self, cell):
         return (
@@ -29,12 +32,14 @@ if __name__ == '__main__':
     model.populate()
 
     renderer = Renderer()
+    buf = pygame.Surface(disp.get_size())
 
     while 1:
         clock.tick(6000)
-        disp.fill(0)
-        model.update()
-        renderer.draw(model, disp)
+        for _ in range(0, 20):
+            x, y = model.update()
+            renderer.draw_one(model, x, y, buf)
+        disp.blit(buf, (0, 0))
         fps = font.render("%.2f" % clock.get_fps(), False, (255, 255, 255))
         disp.blit(fps, (600, 2))
         pygame.display.flip()
