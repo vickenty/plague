@@ -36,22 +36,6 @@ class Map(object):
         # block a semi-random road cell
         self.grid[3, 0].block()
 
-    def neighbours_coordinates(self, x, y):
-        res = []
-        if x+1 < self.width:
-            res.append((x+1, y))
-        if x-1 >= 0:
-            res.append((x-1, y))
-        if y+1 < self.height:
-            res.append((x, y+1))
-        if y-1 >= 0:
-            res.append((x, y-1))
-        return res
-
-    def neighbours(self, other):
-        n = self.neighbours_coordinates(other.x, other.y)
-        return filter(lambda c: not self.grid[c.x, c.y].is_blocked, map(lambda c: self.grid[c], n))
-
     def draw(self):
         for y in range(0, self.height):
             for x in range(0, self.width):
@@ -66,10 +50,10 @@ class Map(object):
             print
 
     directions = [
-        (-1,  0),
-        ( 1,  0),
-        ( 0, -1),
-        ( 0,  1)
+        (-1, 0),
+        (1, 0),
+        (0, -1),
+        (0, 1)
     ]
 
     def update(self):
@@ -78,7 +62,6 @@ class Map(object):
         for x in range(0, self.width):
             for y in range(0, self.height):
                 curr = self.grid[x, y]
-                ns = self.neighbours(curr)
 
                 curr.expire()
                 curr.infect()
