@@ -21,6 +21,8 @@ def get_lim( lo_mood, hi_mood, c_threshold = 0 ):
         else:
             return ( c - c_threshold ) / ( 1 - c_threshold )
 
+    return fun
+
 _instruments = {
     "snare" : get_max( 1, 1 ),
     "hihat" : get_max( 1, 1, 0.33 ),
@@ -75,13 +77,13 @@ def adjust( axes ):
 
         print "Setting volume of track %s to %.2f" % ( track, vol )
 
-        _mixer[track]["sound"].set_volume( vol )
+        _mixer[track]["channel"].set_volume( vol )
 
 def start( axes = (0, 1, 1 ) ):
     global _mixer
 
-    adjust( axes );
-
     for track in _mixer:
         _mixer[track]["channel"] = _mixer[track]["sound"].play( loops = -1 )
+
+    adjust( axes );
 
