@@ -2,7 +2,8 @@ import sys, pygame
 from pygame.locals import *
 
 def get_max( complexity, energy, threshold = 0 ):
-    def fun( c, e ):
+    def fun( axes ):
+        m, c, e = axes
         trig = max( complexity * c, energy * e )
         return 0 if trig <= threshold \
             else ( trig - threshold ) / ( 1 - threshold )
@@ -10,7 +11,8 @@ def get_max( complexity, energy, threshold = 0 ):
     return fun
 
 def get_lim( lo_mood, hi_mood, c_threshold = 0 ):
-    def fun( m, c, e ):
+    def fun( axes ):
+        m, e, c = axes
         cond = 1 if m >= lo_mood and m < hi_mood \
             else 0
 
@@ -73,7 +75,7 @@ def adjust( axes ):
 
         print "Setting volume of track %s to %.2f" % ( track, vol )
 
-        _mixer[track]["channel"].set_volume( vol )
+        _mixer[track]["sound"].set_volume( vol )
 
 def start( axes = (0, 1, 1 ) ):
     global _mixer
