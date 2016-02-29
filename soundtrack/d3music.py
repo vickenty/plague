@@ -16,7 +16,7 @@ def get_lim( lo_mood, hi_mood, c_threshold = 0 ):
         cond = 1 if m >= lo_mood and m < hi_mood \
             else 0
 
-        if c_threshold == 0 or cond == 0 or c <= c_threshold:
+        if cond == 0 or c <= c_threshold:
             return 0
         else:
             return ( c - c_threshold ) / ( 1 - c_threshold )
