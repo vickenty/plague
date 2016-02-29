@@ -55,7 +55,13 @@ class Map(object):
     def draw(self):
         for y in range(0, self.height):
             for x in range(0, self.width):
-                print str(self.grid[x, y].pop),
+                print "% 6.1f" % self.grid[x, y].pop.good,
+            print "\t",
+            for x in range(0, self.width):
+                print "% 6.1f" % self.grid[x, y].pop.sick,
+            print "\t",
+            for x in range(0, self.width):
+                print "% 6.1f" % self.grid[x, y].pop.dead,
                 #print str(self.grid[x, y].char()),
             print
 
