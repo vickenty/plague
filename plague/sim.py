@@ -125,18 +125,19 @@ class Cell(object):
             return "x"
         return self.chars[self.type]
 
-    def infect(self):
+    def update(self):
         pop = self.pop
+
+        pop.kill(0.002)
+
         if pop.good == 0.0:
             return
+
         ratio = (pop.sick + pop.dead) / pop.good / 100
         if ratio == 0.0:
             return
-        self.pop = pop.infect(min(0.1, ratio))
 
-    def expire(self):
-        self.pop = self.pop.kill(0.002)
-
+        pop.infect(min(0.1, ratio))
 
 if __name__ == '__main__':
     m = Map()
