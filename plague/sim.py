@@ -6,6 +6,7 @@ import os
 import math
 import sys
 from pop import Population
+from collections import defaultdict
 
 
 class Map(object):
@@ -59,27 +60,23 @@ class Map(object):
             print
 
     def update(self):
-        buf = {}
+        buf = defaultdict(lambda: Population(0.0))
         for x in range(0, self.width):
             for y in range(0, self.height):
                 curr = self.grid[x, y]
                 curr.expire()
                 curr.infect()
                 for n in self.neighbours(curr):
-                    moving_healthy = n.attract * curr.pop.good
-                    moving_sick = n.attract * curr.pop.sick
+                    moving_healthy = n.attract * curr.pop.good  # account dead ppl
+                    moving_sick = n.attract * curr.pop.sick  # account dead ppl
                     #if x == 0 and y == 0 and n.x == 1 and n.y == 0:
                     #    print "Leaving the city: %.2f" % moving_sick
                     #if x == 1 and y == 0 and n.x == 0 and n.y == 0:
                     #    print "Leaving into the city: %.2f" % moving_sick
-                    if curr not in buf:
-                        buf[curr] = curr.pop
                     buf[curr] -= Population(moving_healthy, moving_sick)
-                    if n not in buf:
-                        buf[n] = n.pop
                     buf[n] += Population(moving_healthy, moving_sick)
         for c, pop in buf.items():
-            c.pop = pop
+            c.pop += pop
 
 
 class Cell(object):
