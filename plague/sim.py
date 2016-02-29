@@ -65,25 +65,42 @@ class Map(object):
                 #print str(self.grid[x, y].char()),
             print
 
+    directions = [
+        (-1,  0),
+        ( 1,  0),
+        ( 0, -1),
+        ( 0,  1)
+    ]
+
     def update(self):
         buf = defaultdict(lambda: Population(0.0))
+        moving = Population(0.0)
         for x in range(0, self.width):
             for y in range(0, self.height):
                 curr = self.grid[x, y]
                 curr.expire()
                 curr.infect()
-                for n in self.neighbours(curr):
-                    moving_healthy = n.attract * curr.pop.good  # account dead ppl
-                    moving_sick = n.attract * curr.pop.sick  # account dead ppl
+                for dx, dy in self.directions:
+                    nx, ny = curr.x + dx, curr.y + dy
+                    if nx < 0 or nx >= self.width or ny < 0 or ny >= self.height:
+                        continue
+
+                    n = self.grid[nx, ny]
+                    if n.is_blocked:
+                        continue
+
+                    moving.good = n.attract * curr.pop.good
+                    moving.sick = n.attract * curr.pop.sick
                     #if x == 0 and y == 0 and n.x == 1 and n.y == 0:
-                    #    print "Leaving the city: %.2f" % moving_sick
+                    #    print "Leaving the city: %.2f" % moving.sick
                     #if x == 1 and y == 0 and n.x == 0 and n.y == 0:
-                    #    print "Leaving into the city: %.2f" % moving_sick
-                    buf[curr] -= Population(moving_healthy, moving_sick)
-                    buf[n] += Population(moving_healthy, moving_sick)
+                    #    print "Leaving into the city: %.2f" % moving.sick
+
+                    buf[curr] -= moving
+                    buf[n] += moving
+
         for c, pop in buf.items():
             c.pop += pop
-
 
 class Cell(object):
     chars = {
