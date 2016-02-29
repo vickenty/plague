@@ -51,6 +51,8 @@ def init():
     pygame.mixer.init(
         frequency = 44100, size = -16, channels = 2, buffer = 4096 )
 
+    pygame.mixer.set_num_channels(16)
+
 def create_mixer( config ):
     mixer = {}
 
