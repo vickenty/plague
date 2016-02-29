@@ -14,12 +14,24 @@ class Population (object):
             self.dead + other.dead,
         )
 
+    def __iadd__(self, other):
+        self.good += other.good
+        self.sick += other.sick
+        self.dead += other.dead
+        return self
+
     def __sub__(self, other):
         return Population(
             self.good - other.good,
             self.sick - other.sick,
             self.dead - other.dead,
         )
+
+    def __isub__(self, other):
+        self.good -= other.good
+        self.sick -= other.sick
+        self.dead -= other.dead
+        return self
 
     def infect(self, factor):
         sick = self.good * factor
