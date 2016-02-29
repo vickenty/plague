@@ -78,8 +78,11 @@ class Map(object):
         for x in range(0, self.width):
             for y in range(0, self.height):
                 curr = self.grid[x, y]
+                ns = self.neighbours(curr)
+
                 curr.expire()
                 curr.infect()
+
                 for dx, dy in self.directions:
                     nx, ny = curr.x + dx, curr.y + dy
                     if nx < 0 or nx >= self.width or ny < 0 or ny >= self.height:
@@ -89,8 +92,9 @@ class Map(object):
                     if n.is_blocked:
                         continue
 
-                    moving.good = n.attract * curr.pop.good
-                    moving.sick = n.attract * curr.pop.sick
+                    attract_coef = min(1.0, n.attract + (curr.pop.dead / 1000))
+                    moving.good = attract_coef * curr.pop.good
+                    moving.sick = attract_coef * curr.pop.sick
                     #if x == 0 and y == 0 and n.x == 1 and n.y == 0:
                     #    print "Leaving the city: %.2f" % moving.sick
                     #if x == 1 and y == 0 and n.x == 0 and n.y == 0:
@@ -102,6 +106,7 @@ class Map(object):
         for c, pop in buf.items():
             c.pop += pop
 
+
 class Cell(object):
     chars = {
         TYPE_CITY: "o",
@@ -110,9 +115,9 @@ class Cell(object):
     }
 
     type2attract = {
-        TYPE_CITY: 0.2,
-        TYPE_ROAD: 0.05,
-        TYPE_FIELD: 0.01,
+        TYPE_CITY: 0.5,
+        TYPE_ROAD: 0.2,
+        TYPE_FIELD: 0.1,
     }
 
     def __init__(self, x, y, cell_type):
