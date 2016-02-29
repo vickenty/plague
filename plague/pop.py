@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
+
 class Population (object):
     def __init__(self, good, sick=0.0, dead=0.0):
         self.good = good
         self.sick = sick
         self.dead = dead
-    
+
     def __add__(self, other):
         return Population(
             self.good + other.good,
@@ -23,7 +24,7 @@ class Population (object):
     def infect(self, factor):
         sick = self.good * factor
         return Population(self.good - sick, self.sick + sick, self.dead)
-    
+
     def kill(self, factor):
         dead = self.sick * factor
         return Population(self.good, self.sick - dead, self.dead + dead)
@@ -39,4 +40,3 @@ if __name__ == '__main__':
         p3 = p2.infect(0.05)
         print p1, '->', p3
         p1 = p3
-
