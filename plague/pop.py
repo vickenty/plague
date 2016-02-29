@@ -35,11 +35,13 @@ class Population (object):
 
     def infect(self, factor):
         sick = self.good * factor
-        return Population(self.good - sick, self.sick + sick, self.dead)
+        self.good -= sick
+        self.sick += sick
 
     def kill(self, factor):
         dead = self.sick * factor
-        return Population(self.good, self.sick - dead, self.dead + dead)
+        self.sick -= dead
+        self.dead += dead
 
     def __str__(self):
         return "% 6.1fg % 6.1fs % 6.1fd" % (self.good, self.sick, self.dead)
@@ -48,7 +50,6 @@ if __name__ == '__main__':
     p1 = Population(100)
     print p1
     for i in range(0, 10):
-        p2 = p1.kill(0.1)
-        p3 = p2.infect(0.05)
-        print p1, '->', p3
-        p1 = p3
+        p1.kill(0.1)
+        p1.infect(0.05)
+        print p1
