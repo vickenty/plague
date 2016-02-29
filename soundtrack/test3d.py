@@ -11,7 +11,7 @@ d3music.init()
 
 d3music.create()
 
-axes = ( 0, 1, 1 )
+axes = [ 0, 1, 1 ]
 
 d3music.start( axes )
 
