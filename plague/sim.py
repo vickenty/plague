@@ -13,8 +13,8 @@ from collections import defaultdict
 
 class Map(object):
     def __init__(self):
-        self.height = 5
-        self.width = 5
+        self.width = 30
+        self.height = 20
         self.grid = {}
         self.order = [ (x, y) for x in range(0, self.width) for y in range(0, self.height) ]
         random.shuffle(self.order)
@@ -28,9 +28,10 @@ class Map(object):
         # build two cities in the top-left and bottom-right
         # corners
         self.grid[0, 0] = Cell(0, 0, TYPE_CITY)
+        self.grid[0, 0].pop.sick = 10.0
         x, y = self.width-1, self.height-1
         self.grid[x, y] = Cell(x, y, TYPE_CITY)
-        self.grid[x, y].pop = Population(0.0)
+        self.grid[0, y] = Cell(0, y, TYPE_CITY)
 
         # connect the two cities with a road
         for x in range(1, self.width):
@@ -98,9 +99,9 @@ class Cell(object):
     }
 
     type2attract = {
-        TYPE_CITY: 0.5,
-        TYPE_ROAD: 0.2,
-        TYPE_FIELD: 0.1,
+        TYPE_CITY: 0.2,
+        TYPE_ROAD: 0.1,
+        TYPE_FIELD: 0.01,
     }
 
     def __init__(self, x, y, cell_type):
@@ -109,8 +110,8 @@ class Cell(object):
         self.type = cell_type
         self.attract = self.type2attract[cell_type]
         self.is_blocked = False
-        healthy = 1000.0 if cell_type == TYPE_CITY else 0.0
-        sick = 1.0 if cell_type == TYPE_CITY else 0.0
+        healthy = 10000.0 if cell_type == TYPE_CITY else 0.0
+        sick = 0.0
         dead = 0.0
         self.pop = Population(healthy, sick, dead)
 
