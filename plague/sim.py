@@ -5,6 +5,8 @@ TYPE_FIELD = 3
 import os
 import math
 import sys
+import random
+import itertools
 from pop import Population
 from collections import defaultdict
 
@@ -14,6 +16,9 @@ class Map(object):
         self.height = 5
         self.width = 5
         self.grid = {}
+        self.order = [ (x, y) for x in range(0, self.width) for y in range(0, self.height) ]
+        random.shuffle(self.order)
+        self.order_iter = itertools.cycle(self.order)
 
     def populate(self):
         for x in range(0, self.width):
@@ -59,36 +64,26 @@ class Map(object):
     def update(self):
         buf = defaultdict(lambda: Population(0.0))
         moving = Population(0.0)
-        for x in range(0, self.width):
-            for y in range(0, self.height):
-                curr = self.grid[x, y]
+        x, y = next(self.order_iter)
+        curr = self.grid[x, y]
+        curr.update()
+        for dx, dy in self.directions:
+            nx, ny = curr.x + dx, curr.y + dy
+            if nx < 0 or nx >= self.width or ny < 0 or ny >= self.height:
+                continue
 
-                curr.expire()
-                curr.infect()
+            n = self.grid[nx, ny]
+            if n.is_blocked:
+                continue
 
-                for dx, dy in self.directions:
-                    nx, ny = curr.x + dx, curr.y + dy
-                    if nx < 0 or nx >= self.width or ny < 0 or ny >= self.height:
-                        continue
+            cpop = curr.pop
+            if cpop.good + cpop.sick + cpop.dead > 0:
+                attract_coef = min(0.25, n.attract * (1.0 + 100 * cpop.dead / (cpop.good + cpop.sick + cpop.dead)))
+                moving.good = attract_coef * curr.pop.good
+                moving.sick = attract_coef * curr.pop.sick
 
-                    n = self.grid[nx, ny]
-                    if n.is_blocked:
-                        continue
-
-                    attract_coef = min(1.0, n.attract + (curr.pop.dead / 1000))
-                    moving.good = attract_coef * curr.pop.good
-                    moving.sick = attract_coef * curr.pop.sick
-                    #if x == 0 and y == 0 and n.x == 1 and n.y == 0:
-                    #    print "Leaving the city: %.2f" % moving.sick
-                    #if x == 1 and y == 0 and n.x == 0 and n.y == 0:
-                    #    print "Leaving into the city: %.2f" % moving.sick
-
-                    buf[curr] -= moving
-                    buf[n] += moving
-
-        for c, pop in buf.items():
-            c.pop += pop
-
+                curr.pop -= moving
+                n.pop += moving
 
 class Cell(object):
     chars = {
