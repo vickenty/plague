@@ -5,8 +5,7 @@ TYPE_FIELD = 3
 import os
 import math
 import sys
-from collections import defaultdict
-from random import randint, random
+from pop import Population
 
 
 class Map(object):
@@ -23,15 +22,13 @@ class Map(object):
         # build two cities in the top-left and bottom-right
         # corners
         self.grid[0, 0] = Cell(0, 0, TYPE_CITY)
-
         x, y = self.width-1, self.height-1
         self.grid[x, y] = Cell(x, y, TYPE_CITY)
-        self.grid[x, y].healthy = 0
-
-        for x in range(1, self.width):
-            self.grid[x, 0] = Cell(x, 0, TYPE_ROAD)
+        self.grid[x, y].pop = Population(0.0)
 
         # connect the two cities with a road
+        for x in range(1, self.width):
+            self.grid[x, 0] = Cell(x, 0, TYPE_ROAD)
         for y in range(1, self.height-1):
             self.grid[self.width-1, y] = Cell(self.width-1, y, TYPE_ROAD)
 
@@ -57,39 +54,32 @@ class Map(object):
     def draw(self):
         for y in range(0, self.height):
             for x in range(0, self.width):
-                #print "%s" % self.grid[x, y].char(),
-                print "%.02f" % self.grid[x, y].healthy,
-            print "\t",
-            for x in range(0, self.width):
-                print "%.02f" % self.grid[x, y].sick,
-            print "\t",
-            for x in range(0, self.width):
-                print "%.02f" % self.grid[x, y].dead,
+                print str(self.grid[x, y].pop),
+                #print str(self.grid[x, y].char()),
             print
 
     def update(self):
-        buf_healthy = defaultdict(lambda: 0)
-        buf_sick = defaultdict(lambda: 0)
+        buf = {}
         for x in range(0, self.width):
             for y in range(0, self.height):
                 curr = self.grid[x, y]
                 curr.expire()
                 curr.infect()
                 for n in self.neighbours(curr):
-                    moving_healthy = n.attract * curr.healthy
-                    moving_sick = n.attract * curr.sick
+                    moving_healthy = n.attract * curr.pop.good
+                    moving_sick = n.attract * curr.pop.sick
                     #if x == 0 and y == 0 and n.x == 1 and n.y == 0:
                     #    print "Leaving the city: %.2f" % moving_sick
                     #if x == 1 and y == 0 and n.x == 0 and n.y == 0:
                     #    print "Leaving into the city: %.2f" % moving_sick
-                    buf_healthy[curr] -= moving_healthy
-                    buf_sick[curr] -= moving_sick
-                    buf_healthy[n] += moving_healthy
-                    buf_sick[n] += moving_sick
-        for c, moving in buf_healthy.items():
-            c.healthy += moving
-        for c, moving in buf_sick.items():
-            c.sick += moving
+                    if curr not in buf:
+                        buf[curr] = curr.pop
+                    buf[curr] -= Population(moving_healthy, moving_sick)
+                    if n not in buf:
+                        buf[n] = n.pop
+                    buf[n] += Population(moving_healthy, moving_sick)
+        for c, pop in buf.items():
+            c.pop = pop
 
 
 class Cell(object):
@@ -108,12 +98,13 @@ class Cell(object):
     def __init__(self, x, y, cell_type):
         self.x = x
         self.y = y
-        self.healthy = 1000 if cell_type == TYPE_CITY else 0
-        self.sick = 1 if cell_type == TYPE_CITY else 0
-        self.dead = 0
         self.type = cell_type
         self.attract = self.type2attract[cell_type]
         self.is_blocked = False
+        healthy = 1000.0 if cell_type == TYPE_CITY else 0.0
+        sick = 1.0 if cell_type == TYPE_CITY else 0.0
+        dead = 0.0
+        self.pop = Population(healthy, sick, dead)
 
     def block(self):
         self.is_blocked = True
@@ -127,23 +118,17 @@ class Cell(object):
         return self.chars[self.type]
 
     def infect(self):
-        if self.healthy == 0.0:
-            return 0.0
-        ratio = (self.sick + self.dead) / self.healthy / 100
+        pop = self.pop
+        if pop.good == 0.0:
+            return
+        ratio = (pop.sick + pop.dead) / pop.good / 100
         if ratio == 0.0:
-            return 0.0
-        infection_probability = min(0.1, ratio)
-        infected = self.healthy * infection_probability
-        assert infected < self.healthy
-        self.sick += infected
-        self.healthy -= infected
-        return infected
+            return
+        self.pop = pop.infect(min(0.1, ratio))
 
     def expire(self):
-        expired = self.sick * 0.2
-        self.dead += expired
-        self.sick -= expired
-        return expired
+        self.pop = self.pop.kill(0.2)
+
 
 if __name__ == '__main__':
     m = Map()
@@ -151,6 +136,6 @@ if __name__ == '__main__':
 
     while 1:
         m.update()
-        print ""
+        print
         m.draw()
         raw_input()
