@@ -5,9 +5,9 @@ from constants import *
 
 class Renderer (object):
     max_pop = 30
-    cell_w = 14
-    cell_h = 14
     margin = 2
+    cell_w = GRID_W - margin
+    cell_h = GRID_H - margin
     stride_x = cell_w + margin
     stride_y = cell_h + margin
 
@@ -37,6 +37,7 @@ class Renderer (object):
             min(255, int(cell.pop.sick ** 0.5 / self.max_pop * 255)),
             min(255, int(cell.pop.dead ** 0.5 / self.max_pop * 255)),
         )
+
 
 if __name__ == '__main__':
     from sim import Map

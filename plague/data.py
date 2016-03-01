@@ -1,5 +1,6 @@
 import os
 import sys
+import pygame
 from contextlib import contextmanager
 
 this_dir = os.path.abspath(os.path.dirname(__file__))
@@ -28,3 +29,6 @@ def get_path(name):
 def open(name):
     with file(get_path(name)) as f:
         yield f
+
+def load_image(name):
+    return pygame.image.load(get_path(name)).convert_alpha()

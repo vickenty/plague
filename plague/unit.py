@@ -1,18 +1,27 @@
 import pygame.draw
+from constants import *
+import data
 
 class Unit (object):
-    speed = 0.1
+    speed = 0.02
+    selection_color = (255, 255, 0)
 
     def __init__(self, x, y):
         self.x = x
         self.y = y
+        self.rect = pygame.Rect(0, 0, GRID_W, GRID_H)
         self.command = self.cmd_idle, ()
+        self.sprite = data.load_image("unit.png")
+
+    def set_command(self, cmd, *args):
+        impl = getattr(self, "cmd_" + cmd)
+        self.command = impl, args
 
     def cmd_move(self, tx, ty, new_cmd):
         if self.x == tx and self.y == ty:
-            self.command = new_cmd
+            self.set_command(*new_cmd)
             return
-    
+
         dx = tx - self.x
         dy = ty - self.y
         dl = (dx ** 2 + dy ** 2) ** 0.5
@@ -38,6 +47,13 @@ class Unit (object):
     def update(self):
         cmd, args = self.command
         cmd(*args)
+        self.rect.x = int(self.x * GRID_W)
+        self.rect.y = int(self.y * GRID_H)
+
+    def draw(self, targ, selected):
+        targ.blit(self.sprite, self.rect.topleft)
+        if selected:
+            pygame.draw.rect(targ, self.selection_color, self.rect, 1)
 
 if __name__ == '__main__':
     u = Unit(0.0, 0.0)
