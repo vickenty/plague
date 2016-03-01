@@ -29,17 +29,22 @@ if __name__ == '__main__':
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
 
     model = Map()
-    model.load("level1.map")
+    model.load("level1")
 
     renderer = Renderer()
     buf = pygame.Surface(disp.get_size())
 
     while 1:
         clock.tick(6000)
-        for _ in range(0, 20):
+        for _ in range(0, 2):
             x, y = model.update()
             renderer.draw_one(model, x, y, buf)
         disp.blit(buf, (0, 0))
         fps = font.render("%.2f" % clock.get_fps(), False, (255, 255, 255))
         disp.blit(fps, (600, 2))
+
+        if model.census:
+            cnc = font.render("%.2f / %.2f / %.2f" % (model.census.good, model.census.sick, model.census.dead), True, (255, 255, 255))
+            disp.blit(cnc, (600, 18))
+
         pygame.display.flip()
