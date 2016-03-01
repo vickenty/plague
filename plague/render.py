@@ -1,18 +1,35 @@
 import pygame
 from pygame.locals import *
 
+from constants import *
+
 class Renderer (object):
     max_pop = 30
+    cell_w = 14
+    cell_h = 14
+    margin = 2
+    stride_x = cell_w + margin
+    stride_y = cell_h + margin
+
+    def __init__(self):
+        self.buf = pygame.Surface((SCREEN_W, SCREEN_H))
+        self.buf.fill(0)
+
+    def fill(self, color):
+        self.buf.fill(color)
 
     def draw(self, m, surf):
         for x in xrange(0, m.width):
             for y in xrange(0, m.height):
                 self.draw_one(m, x, y, surf)
 
-    def draw_one(self, m, x, y, surf):
-        rect = (x * 16, y * 16, 14, 14)
+    def draw_one(self, m, x, y):
+        rect = (x * self.stride_x, y * self.stride_y, self.cell_w, self.cell_h)
         color = self.get_color(m.grid[x, y])
-        surf.fill(color, rect)
+        self.buf.fill(color, rect)
+
+    def blit(self, targ):
+        targ.blit(self.buf, (self.margin, self.margin))
 
     def get_color(self, cell):
         return (
@@ -40,7 +57,6 @@ if __name__ == '__main__':
             x, y = model.update()
             renderer.draw_one(model, x, y, buf)
         disp.blit(buf, (0, 0))
-        fps = font.render("%.2f" % clock.get_fps(), False, (255, 255, 255))
         disp.blit(fps, (600, 2))
 
         if model.census:
