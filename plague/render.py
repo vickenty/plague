@@ -29,7 +29,7 @@ if __name__ == '__main__':
     font = pygame.font.Font(pygame.font.get_default_font(), 16)
 
     model = Map()
-    model.populate()
+    model.load("level1.map")
 
     renderer = Renderer()
     buf = pygame.Surface(disp.get_size())

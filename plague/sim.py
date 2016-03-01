@@ -9,16 +9,37 @@ import random
 import itertools
 from pop import Population
 from collections import defaultdict
-
+import data
 
 class Map(object):
     def __init__(self):
-        self.width = 30
-        self.height = 20
+        self.width = None
+        self.height = None
         self.grid = {}
+
+    char_types = {
+        '_': TYPE_FIELD,
+        'c': TYPE_CITY,
+        'v': TYPE_CITY,
+        '#': TYPE_ROAD,
+    }
+
+    def make_cell(self, x, y, char):
+        return Cell(x, y, cell_type)
+
+    def load(self, name):
+        for y, line in enumerate(data.open(name)):
+            for x, char in enumerate(line.strip()):
+                cell_type = self.char_types[char]
+                self.grid[x, y] = Cell(x, y, cell_type)
+        self.width = x
+        self.height = y
+        print self.width, self.height
+
+    def init(self):
         self.order = [ (x, y) for x in range(0, self.width) for y in range(0, self.height) ]
-        random.shuffle(self.order)
         self.order_iter = itertools.cycle(self.order)
+        random.shuffle(self.order)
 
     def populate(self):
         for x in range(0, self.width):
