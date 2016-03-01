@@ -34,8 +34,8 @@ class Map(object):
                 for x, char in enumerate(line.strip()):
                     self.grid[x, y] = config.make_cell(char)
 
-        self.width = x
-        self.height = y
+        self.width = x + 1
+        self.height = y + 1
 
         print self.width, self.height
 
