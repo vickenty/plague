@@ -36,16 +36,23 @@ class Map(object):
         self.height = y + 1
 
         for (x, y), cell in self.grid.items():
-            if not cell.has_walls:
-                continue
+            bits = 0
 
-            for dx, dy in self.directions:
+            for f, (dx, dy) in enumerate(self.directions):
                 nx, ny = x + dx, y + dy
+
+                if not (0 <= nx < self.width and 0 <= ny < self.height):
+                    continue
+
                 neighbor = self.grid[nx, ny]
                 # neighboring cells with walls are not separated
-                # roads are special
-                if not (neighbor.has_walls or neighbor.gates):
+                if cell.has_walls and not (neighbor.has_walls or neighbor.gates):
                     cell.walls[dx, dy] = True
+
+                if cell.view == neighbor.view:
+                    bits |= (1 << f)
+
+            cell.nview = cell.view + self.tile_suffix[bits & cell.sprite_mask]
 
         print self.width, self.height
 
@@ -58,10 +65,29 @@ class Map(object):
 
     directions = [
         (-1, 0),
-        (1, 0),
         (0, -1),
-        (0, 1)
+        (1, 0),
+        (0, 1),
     ]
+
+    tile_suffix = {
+        0x0: "",    # l t r b
+        0x1: "-ll", # 1 0 0 0
+        0x2: "-tt", # 0 1 0 0
+        0x3: "-br", # 1 1 0 0
+        0x4: "-rr", # 0 0 1 0
+        0x5: "-hh", # 1 0 1 0
+        0x6: "-bl", # 0 1 1 0
+        0x7: "--t", # 1 1 1 0
+        0x8: "-bb", # 0 0 0 1
+        0x9: "-tr", # 1 0 0 1
+        0xa: "-vv", # 0 1 0 1
+        0xb: "-|l", # 1 1 0 1
+        0xc: "-tl", # 0 0 1 1
+        0xd: "--b", # 1 0 1 1
+        0xe: "-|r", # 0 1 1 1
+        0xf: "-cc", # 1 1 1 1
+    }
 
     def update(self):
         moving = Population(0.0)
@@ -100,14 +126,16 @@ class Map(object):
         return x, y
 
 class Cell(object):
-    def __init__(self, view, attract=0.0, good=0.0, sick=0.0, dead=0.0, has_walls=False, gates=False):
+    def __init__(self, view, attract=0.0, good=0.0, sick=0.0, dead=0.0, has_walls=False, gates=False, sprite_mask=0):
         self.view = view
+        self.nview = view
         self.attract = attract
         self.is_blocked = False
         self.pop = Population(good, sick, dead)
         self.has_walls = has_walls
         self.gates = gates
         self.walls = {}
+        self.sprite_mask = sprite_mask
 
     def block(self):
         self.is_blocked = True

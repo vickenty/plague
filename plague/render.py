@@ -1,7 +1,117 @@
+from collections import defaultdict
+from random import choice
 import pygame
 from pygame.locals import *
 
 from constants import *
+import data
+
+class Tileset (object):
+    def __init__(self, name):
+        self.name = name
+        self.conf = data.load_json(name)
+        self.surf = pygame.transform.scale(data.load_image(self.conf["image"]), (768, 768))
+
+        self.tiles = defaultdict(list)
+        self.dummy = pygame.Surface((GRID_W, GRID_H))
+        self.dummy.fill((255, 0, 0))
+
+        for name, coords in self.conf["tiles"].items():
+            for ix, iy in coords:
+                x = ix * GRID_W
+                y = iy * GRID_H
+                tile = pygame.Surface((GRID_W, GRID_H), SRCALPHA)
+                tile.blit(self.surf, (0, 0), (x, y, GRID_W, GRID_H))
+                self.tiles[name].append(tile)
+
+        gen = defaultdict(list)
+
+        # straits
+        for tile in self.tiles["road-hh"]:
+            tile = pygame.transform.flip(tile, True, False)
+            gen["road-hh"].append(tile)
+            tile = pygame.transform.flip(tile, False, True)
+            gen["road-hh"].append(tile)
+            tile = pygame.transform.flip(tile, True, False)
+            gen["road-hh"].append(tile)
+
+        for tile in self.tiles["road-vv"]:
+            tile = pygame.transform.flip(tile, True, False)
+            gen["road-vv"].append(tile)
+            tile = pygame.transform.flip(tile, False, True)
+            gen["road-vv"].append(tile)
+            tile = pygame.transform.flip(tile, True, False)
+            gen["road-vv"].append(tile)
+
+        # turns
+        for tile in self.tiles["road-tl"]:
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-bl"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-br"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-tr"].append(tile)
+
+        for tile in self.tiles["road-tr"]:
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-tl"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-bl"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-br"].append(tile)
+
+        for tile in self.tiles["road-br"]:
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-tr"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-tl"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-bl"].append(tile)
+
+        for tile in self.tiles["road-bl"]:
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-br"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-tr"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-tl"].append(tile)
+
+        # dead-ends
+        for tile in self.tiles["road-bb"]:
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-rr"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-tt"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-ll"].append(tile)
+
+        # tees
+        for tile in self.tiles["road--t"]:
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-|l"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road--b"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-|r"].append(tile)
+
+        for tile in self.tiles["road-|l"]:
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road--b"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road-|r"].append(tile)
+            tile = pygame.transform.rotate(tile, 90)
+            gen["road--t"].append(tile)
+
+        for name, tiles in gen.items():
+            self.tiles[name].extend(tiles)
+
+    def get(self, name):
+        tiles = self.tiles[name]
+        if not tiles:
+            #raise ValueError, "missing tile '%s'" % (name,)
+            print name
+            return self.dummy
+        return choice(tiles)
 
 class Renderer (object):
     max_pop = 10
@@ -14,25 +124,31 @@ class Renderer (object):
     def __init__(self):
         self.buf = pygame.Surface((SCREEN_W, SCREEN_H))
         self.buf.fill(0)
+        self.tls = Tileset("tileset.cfg")
 
     def fill(self, color):
         self.buf.fill(color)
 
-    def draw(self, m, surf):
-        for x in xrange(0, m.width):
-            for y in xrange(0, m.height):
-                self.draw_one(m, x, y, surf)
+    def draw(self, m):
+        for (x, y), c in m.grid.items():
+            self.draw_one(x, y, c)
 
-    def draw_one(self, m, x, y):
-        rect = pygame.Rect(x * self.stride_x, y * self.stride_y, self.cell_w, self.cell_h)
-        cell = m.grid[x, y]
-        color = self.get_color(cell)
-        self.buf.fill(color, rect)
+    def draw_one(self, ix, iy, cell):
+        dst = ix * GRID_W, iy * GRID_H
 
-        pygame.draw.line(self.buf, self.get_wall_color(cell, 0, -1), rect.topleft, rect.topright)
-        pygame.draw.line(self.buf, self.get_wall_color(cell, 1, 0), rect.topright, rect.bottomright)
-        pygame.draw.line(self.buf, self.get_wall_color(cell, 0, 1), rect.bottomright, rect.bottomleft)
-        pygame.draw.line(self.buf, self.get_wall_color(cell, -1, 0), rect.bottomleft, rect.topleft)
+        self.buf.blit(self.tls.get("field"), dst)
+
+        if cell.walls.get((0, -1)):
+            self.buf.blit(self.tls.get("wall-tt"), dst)
+
+        self.buf.blit(self.tls.get(cell.nview), dst)
+
+        if cell.walls.get((-1, 0)):
+            self.buf.blit(self.tls.get("wall-ll"), dst)
+        if cell.walls.get((1, 0)):
+            self.buf.blit(self.tls.get("wall-rr"), dst)
+        if cell.walls.get((0, 1)):
+            self.buf.blit(self.tls.get("wall-bb"), dst)
 
     def blit(self, targ):
         targ.blit(self.buf, (self.margin, self.margin))

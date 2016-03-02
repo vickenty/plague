@@ -25,6 +25,8 @@ class Game (object):
         self.units[1].set_command("move", 3, 12, ("idle",))
 
         self.renderer = render.Renderer()
+        self.renderer.draw(self.model)
+
         self.clock = pygame.time.Clock()
 
         self.font = pygame.font.Font(pygame.font.get_default_font(), 16)
@@ -98,7 +100,6 @@ class Game (object):
 
         for _ in range(0, UPDATES_PER_FRAME):
             dx, dy = self.model.update()
-            self.renderer.draw_one(self.model, dx, dy)
 
         disp.fill(0)
         self.renderer.blit(disp)

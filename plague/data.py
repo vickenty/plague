@@ -41,6 +41,6 @@ def load_image(name):
     path = get_path(name)
     if path in image_cache:
         return image_cache[path]
-    img = pygame.image.load(path).convert_alpha()
+    img = pygame.image.load(path)
     image_cache[path] = img
     return img
