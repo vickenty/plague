@@ -48,6 +48,11 @@ class Population (object):
         print "Reaped: %.2f / %.2f" % (reaped, self.dead)
         self.dead -= reaped
 
+    def burn(self, factor):
+        self.good -= self.good * factor
+        self.sick -= self.sick * factor
+        self.dead -= self.dead * factor
+
     def __str__(self):
         return "% 6.1fg % 6.1fs % 6.1fd" % (self.good, self.sick, self.dead)
 
