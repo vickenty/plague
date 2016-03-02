@@ -5,6 +5,7 @@ import sim
 import render
 import unit
 import buttons
+import data
 from constants import *
 
 class Game (object):
@@ -28,9 +29,12 @@ class Game (object):
 
         self.buttons = buttons.ButtonRegistry()
 
-        self.buttons.add_button("Reap", self.send_reap, 600, 40, 150)
-        self.buttons.add_button("Burn", self.send_burn, 600, 80, 150)
-        self.buttons.add_button("Cancel", self.cancel_selection, 600, 120, 150)
+        button_up = data.load_image("button-unpressed-grey.png")
+        button_down = data.load_image("button-pressed-grey.png")
+
+        self.buttons.add_sprite_button("Reap", self.send_reap, 600, 40, button_up, button_down)
+        self.buttons.add_sprite_button("Burn", self.send_burn, 600, 80, button_up, button_down)
+        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 600, 120, button_up, button_down)
 
     def send_reap(self):
         if not self.selection:
