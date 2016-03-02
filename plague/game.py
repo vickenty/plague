@@ -29,6 +29,8 @@ class Game (object):
 
         self.font = pygame.font.Font(pygame.font.get_default_font(), 16)
         self.selection = None
+        self.need_destination = False
+        self.pending_cmd = None
 
         self.buttons = buttons.ButtonRegistry()
 
@@ -39,26 +41,42 @@ class Game (object):
         self.buttons.add_sprite_button("Burn", self.send_burn, 600, 80, img)
         self.buttons.add_sprite_button("Cancel", self.cancel_selection, 600, 120, img)
 
+    def set_pending_cmd(self, cmd):
+        self.need_destination = True
+        self.pending_cmd = cmd
+
+    def unset_pending_cmd(self):
+        self.need_destination = False
+        self.pending_cmd = None
+        self.buttons.unset_pending_button()
+
+    def execute_pending_cmd(self, dst):
+        x, y = dst
+        self.selection.set_command("move", x, y, self.pending_cmd)
+        self.unset_pending_cmd()
+
     def send_reap(self):
         if not self.selection:
             return
-        unit = self.selection
-        x, y = unit.x, unit.y
-        self.selection.set_command("reap", self.model.grid[x, y].pop)
+        self.set_pending_cmd(("reap", self.model.grid))
 
     def send_burn(self):
         if not self.selection:
             return
+        self.set_pending_cmd(("burn", self.model.grid))
 
     def cancel_selection(self):
         self.selection = None
-        self.buttons.unset_pending_button()
+        self.unset_pending_cmd()
 
     def find_unit(self, pos):
         for unit in self.units:
             if unit.rect.collidepoint(pos):
                 return unit
         return None
+
+    def find_cell(self, pos):
+        return 0, 0
 
     def update(self, disp):
         self.clock.tick(FRAMES_PER_SECOND)
@@ -70,6 +88,10 @@ class Game (object):
             if ev.type == pygame.MOUSEBUTTONUP:
                 if self.selection:
                     if self.buttons.process_click(ev):
+                        continue
+                    if self.need_destination:
+                        dst = self.find_cell(ev.pos)
+                        self.execute_pending_cmd(dst)
                         continue
 
                 self.selection = self.find_unit(ev.pos)

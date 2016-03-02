@@ -37,11 +37,11 @@ class Unit (object):
         self.x += dx
         self.y += dy
 
-    def cmd_reap(self, pop):
-        pop.reap(0.001) # TODO make configurable?
+    def cmd_reap(self, grid):
+        grid[self.x, self.y].pop.reap(0.001)  # TODO make configurable?
 
-    def cmd_burn(self):
-        pass
+    def cmd_burn(self, grid):
+        grid[self.x, self.y].pop.burn(0.001)  # TODO make configurable?
 
     def cmd_idle(self):
         pass
