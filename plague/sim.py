@@ -3,7 +3,6 @@ import math
 import sys
 import random
 import itertools
-import json
 
 from pop import Population
 from collections import defaultdict
@@ -26,8 +25,7 @@ class Map(object):
         self.running_census = None
 
     def load(self, name):
-        with data.open(name + ".cfg") as src:
-            config = Config(json.load(src))
+        config = Config(data.load_json(name + ".cfg"))
 
         with data.open(name  + ".map") as src:
             for y, line in enumerate(src):

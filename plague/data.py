@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import pygame
 from contextlib import contextmanager
 
@@ -31,6 +32,10 @@ def get_path(name):
 def open(name):
     with file(get_path(name)) as f:
         yield f
+
+def load_json(name):
+    with open(name) as f:
+        return json.load(f)
 
 def load_image(name):
     path = get_path(name)
