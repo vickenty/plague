@@ -17,9 +17,11 @@ class Game (object):
 
         self.units = [
             unit.Unit(self.model.width // 2, self.model.height // 2),
+            unit.Unit(self.model.width // 3, self.model.height // 3),
         ]
 
         self.units[0].set_command("move", 1, 1, ("idle",))
+        self.units[1].set_command("move", 3, 12, ("idle",))
 
         self.renderer = render.Renderer()
         self.clock = pygame.time.Clock()
@@ -29,16 +31,23 @@ class Game (object):
 
         self.buttons = buttons.ButtonRegistry()
 
-        button_up = data.load_image("button-unpressed-grey.png")
-        button_down = data.load_image("button-pressed-grey.png")
+        btn_up = data.load_image("button-unpressed-grey.png")
+        btn_down = data.load_image("button-pressed-grey.png")
 
-        self.buttons.add_sprite_button("Reap", self.send_reap, 600, 40, button_up, button_down)
-        self.buttons.add_sprite_button("Burn", self.send_burn, 600, 80, button_up, button_down)
-        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 600, 120, button_up, button_down)
+        btn_reap = self.buttons.add_sprite_button("Reap", self.send_reap, 600, 40, btn_up, btn_down)
+        btn_burn = self.buttons.add_sprite_button("Burn", self.send_burn, 600, 80, btn_up, btn_down)
+        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 600, 120, btn_up, btn_down)
+
+        # ugh
+        self.btn_burn = btn_burn
+        self.btn_reap = btn_reap
 
     def send_reap(self):
         if not self.selection:
             return
+        unit = self.selection
+        x, y = unit.x, unit.y
+        self.selection.set_command("reap", self.model.grid[x, y].pop)
 
     def send_burn(self):
         if not self.selection:
@@ -78,6 +87,13 @@ class Game (object):
             unit.draw(disp, self.selection == unit)
 
         if self.selection:
+            if self.selection.is_moving:
+                self.btn_reap.hide()
+                self.btn_burn.hide()
+            else:
+                self.btn_reap.show()
+                self.btn_burn.show()
+
             self.buttons.draw(disp)
 
         self.draw_fps(disp)

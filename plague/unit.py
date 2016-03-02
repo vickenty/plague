@@ -2,6 +2,7 @@ import pygame.draw
 from constants import *
 import data
 
+
 class Unit (object):
     speed = 0.02
     selection_color = (255, 255, 0)
@@ -12,6 +13,7 @@ class Unit (object):
         self.rect = pygame.Rect(0, 0, GRID_W, GRID_H)
         self.command = self.cmd_idle, ()
         self.sprite = data.load_image("unit.png")
+        self.is_moving = False
 
     def set_command(self, cmd, *args):
         impl = getattr(self, "cmd_" + cmd)
@@ -19,8 +21,11 @@ class Unit (object):
 
     def cmd_move(self, tx, ty, new_cmd):
         if self.x == tx and self.y == ty:
+            self.is_moving = False
             self.set_command(*new_cmd)
             return
+
+        self.is_moving = True
 
         dx = tx - self.x
         dy = ty - self.y
@@ -32,8 +37,8 @@ class Unit (object):
         self.x += dx
         self.y += dy
 
-    def cmd_reap(self):
-        pass
+    def cmd_reap(self, pop):
+        pop.reap(0.001) # TODO make configurable?
 
     def cmd_burn(self):
         pass

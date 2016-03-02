@@ -43,6 +43,11 @@ class Population (object):
         self.sick -= dead
         self.dead += dead
 
+    def reap(self, factor):
+        reaped = self.dead * factor
+        print "Reaped: %.2f / %.2f" % (reaped, self.dead)
+        self.dead -= reaped
+
     def __str__(self):
         return "% 6.1fg % 6.1fs % 6.1fd" % (self.good, self.sick, self.dead)
 
