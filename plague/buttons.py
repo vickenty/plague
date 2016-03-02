@@ -69,14 +69,13 @@ class Button(object):
 
 
 class SpriteButton(Button):
-    def __init__(self, font, text, cb, x, y, iup, idown):
+    def __init__(self, font, text, cb, x, y, img):
         self.text = font.render(text, True, self.fg_color)
         text_w, text_h = self.text.get_size()
 
         # assuming iup and idown have the same dimensions
-        self.image_up = iup
-        self.image_down = idown
-        w, h = iup.get_size()
+        self.image_up, self.image_down = img
+        w, h = self.image_up.get_size()
 
         self.rect = pygame.Rect(x, y, w, h)
 
@@ -117,9 +116,9 @@ if __name__ == "__main__":
     br.add_button("Foobar-o-matic", fancy_cb, 4, 4, 128)
     br.add_button("Exit", sys.exit, 4, 48, 128)
 
-    idown = data.load_image("button-pressed-grey.png")
-    iup = data.load_image("button-unpressed-grey.png")
-    br.add_sprite_button("KABOOM", fancy_cb, 4, 92, iup, idown)
+    img = (data.load_image("button-pressed-grey.png"),
+           data.load_image("button-unpressed-grey.png"),)
+    br.add_sprite_button("KABOOM", fancy_cb, 4, 92, img)
 
     while 1:
         br.draw(screen)

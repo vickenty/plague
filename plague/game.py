@@ -31,16 +31,12 @@ class Game (object):
 
         self.buttons = buttons.ButtonRegistry()
 
-        btn_up = data.load_image("button-unpressed-grey.png")
-        btn_down = data.load_image("button-pressed-grey.png")
+        img = (data.load_image("button-unpressed-grey.png"),
+               data.load_image("button-pressed-grey.png"),)
 
-        btn_reap = self.buttons.add_sprite_button("Reap", self.send_reap, 600, 40, btn_up, btn_down)
-        btn_burn = self.buttons.add_sprite_button("Burn", self.send_burn, 600, 80, btn_up, btn_down)
-        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 600, 120, btn_up, btn_down)
-
-        # ugh
-        self.btn_burn = btn_burn
-        self.btn_reap = btn_reap
+        self.buttons.add_sprite_button("Reap", self.send_reap, 600, 40, img)
+        self.buttons.add_sprite_button("Burn", self.send_burn, 600, 80, img)
+        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 600, 120, img)
 
     def send_reap(self):
         if not self.selection:
@@ -87,13 +83,6 @@ class Game (object):
             unit.draw(disp, self.selection == unit)
 
         if self.selection:
-            if self.selection.is_moving:
-                self.btn_reap.hide()
-                self.btn_burn.hide()
-            else:
-                self.btn_reap.show()
-                self.btn_burn.show()
-
             self.buttons.draw(disp)
 
         self.draw_fps(disp)
