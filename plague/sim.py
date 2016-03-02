@@ -37,18 +37,6 @@ class Map(object):
         self.width = x + 1
         self.height = y + 1
 
-        for (x, y), cell in self.grid.items():
-            if not cell.has_walls:
-                continue
-
-            for dx, dy in self.directions:
-                nx, ny = x + dx, y + dy
-                neighbor = self.grid[nx, ny]
-                # neighboring cells with walls are not separated
-                # roads are special
-                if not (neighbor.has_walls or neighbor.gates):
-                    cell.walls[dx, dy] = True
-
         print self.width, self.height
 
         self.init()
@@ -59,10 +47,10 @@ class Map(object):
         random.shuffle(self.order)
 
     directions = [
-        (0, -1),
-        (1, 0),
-        (0, 1),
         (-1, 0),
+        (1, 0),
+        (0, -1),
+        (0, 1)
     ]
 
     def update(self):
@@ -73,6 +61,7 @@ class Map(object):
         if (x, y) == self.order[0]:
             self.census = self.running_census
             self.running_census = Population(0.0)
+
 
         curr.update()
 
@@ -86,10 +75,10 @@ class Map(object):
                     continue
 
                 n = self.grid[nx, ny]
-                if n.is_blocked or curr.walls.get((dx, dy)) or n.walls.get((-dx, -dy)):
+                if n.is_blocked:
                     continue
 
-                attract_coef = min(0.25, n.attract * (1.0 + 10 * cpop.dead / tpop))
+                attract_coef = min(0.25, n.attract * (1.0 + 100 * cpop.dead / tpop))
                 moving.good = attract_coef * curr.pop.good
                 moving.sick = attract_coef * curr.pop.sick
 
@@ -101,14 +90,11 @@ class Map(object):
         return x, y
 
 class Cell(object):
-    def __init__(self, view, attract=0.0, good=0.0, sick=0.0, dead=0.0, has_walls=False, gates=False):
+    def __init__(self, view, attract=0.0, good=0.0, sick=0.0, dead=0.0):
         self.view = view
         self.attract = attract
         self.is_blocked = False
         self.pop = Population(good, sick, dead)
-        self.has_walls = has_walls
-        self.gates = gates
-        self.walls = {}
 
     def block(self):
         self.is_blocked = True
