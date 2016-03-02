@@ -55,7 +55,7 @@ class Game (object):
         for ev in pygame.event.get():
             if ev.type == QUIT:
                 return None
-            if ev.type == MOUSEBUTTONUP:
+            if ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP:
                 if self.selection:
                     if self.buttons.process_click(ev):
                         continue
