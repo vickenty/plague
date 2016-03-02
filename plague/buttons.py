@@ -10,15 +10,15 @@ class ButtonRegistry(object):
 
     def add_button(self, *args):
         b = Button(self.font, *args)
-        b.show()
         self.buttons.append(b)
-        return b
+
+        b.show()
 
     def add_sprite_button(self, *args):
         b = SpriteButton(self.font, *args)
-        b.show()
         self.buttons.append(b)
-        return b
+
+        b.show()
 
     def process_click(self, ev):
         for b in self.buttons:

@@ -18,8 +18,6 @@ for path in data_dirs:
     except IOError:
         pass
 
-image_cache = {}
-
 if data_dir is None:
     print "Sorry, can't find game data. Please run it from the directory where run_game.py is located."
     sys.exit(1)
@@ -33,9 +31,4 @@ def open(name):
         yield f
 
 def load_image(name):
-    path = get_path(name)
-    if path in image_cache:
-        return image_cache[path]
-    img = pygame.image.load(path).convert_alpha()
-    image_cache[path] = img
-    return img
+    return pygame.image.load(get_path(name)).convert_alpha()
