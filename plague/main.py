@@ -1,5 +1,5 @@
-import pygame
-from pygame.locals import *
+from pyg import pygame
+from pyg.locals import *
 import game
 
 from constants import *

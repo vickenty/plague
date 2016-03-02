@@ -1,7 +1,7 @@
 from collections import defaultdict
 from random import choice
-import pygame
-from pygame.locals import *
+from pyg import pygame
+from pyg.locals import *
 
 from constants import *
 import data
@@ -10,7 +10,7 @@ class Tileset (object):
     def __init__(self, name):
         self.name = name
         self.conf = data.load_json(name)
-        self.surf = pygame.transform.scale(data.load_image(self.conf["image"]), (768, 768))
+        self.surf = data.load_image(self.conf["image"])
 
         self.tiles = defaultdict(list)
         self.dummy = pygame.Surface((GRID_W, GRID_H))
@@ -23,6 +23,10 @@ class Tileset (object):
                 tile = pygame.Surface((GRID_W, GRID_H), SRCALPHA)
                 tile.blit(self.surf, (0, 0), (x, y, GRID_W, GRID_H))
                 self.tiles[name].append(tile)
+
+        if pygame.version.vernum >= (2, 0, 0):
+            # pygame_sdl2 has trouble with auto-generate stuff below, so we skip it
+            return
 
         gen = defaultdict(list)
 
@@ -122,14 +126,15 @@ class Renderer (object):
     stride_y = cell_h + margin
 
     def __init__(self):
-        self.buf = pygame.Surface((SCREEN_W, SCREEN_H))
-        self.buf.fill(0)
         self.tls = Tileset("tileset.cfg")
 
     def fill(self, color):
         self.buf.fill(color)
 
     def draw(self, m):
+        self.buf = pygame.Surface((m.width * GRID_W, m.height * GRID_H))
+        self.buf.fill(0)
+
         for (x, y), c in m.grid.items():
             self.draw_one(x, y, c)
 
@@ -150,8 +155,13 @@ class Renderer (object):
         if cell.walls.get((0, 1)):
             self.buf.blit(self.tls.get("wall-bb"), dst)
 
+    def get_size(self):
+        w, h = self.buf.get_size()
+        return w * SCALE_FACTOR, h * SCALE_FACTOR
+
+
     def blit(self, targ):
-        targ.blit(self.buf, (self.margin, self.margin))
+        pygame.transform.scale(self.buf, self.get_size(), targ)
 
     def get_color(self, cell):
         return (

@@ -1,5 +1,5 @@
-import pygame
-from pygame.locals import *
+from pyg import pygame
+from pyg.locals import *
 
 import sim
 import render
@@ -26,6 +26,7 @@ class Game (object):
 
         self.renderer = render.Renderer()
         self.renderer.draw(self.model)
+        self.render_buffer = pygame.Surface(self.renderer.get_size())
 
         self.clock = pygame.time.Clock()
 
@@ -102,7 +103,8 @@ class Game (object):
             dx, dy = self.model.update()
 
         disp.fill(0)
-        self.renderer.blit(disp)
+        self.renderer.blit(self.render_buffer)
+        disp.blit(self.render_buffer, (0, 0))
 
         for unit in self.units:
             unit.update()

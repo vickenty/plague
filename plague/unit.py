@@ -1,4 +1,4 @@
-import pygame.draw
+from pyg import pygame
 from constants import *
 import data
 

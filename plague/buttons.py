@@ -1,4 +1,4 @@
-import pygame
+from pyg import pygame
 
 
 class ButtonRegistry(object):

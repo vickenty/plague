@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-import pygame
+from pyg import pygame
 from contextlib import contextmanager
 
 this_dir = os.path.abspath(os.path.dirname(__file__))
