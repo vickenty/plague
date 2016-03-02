@@ -8,6 +8,16 @@ class ButtonRegistry(object):
         default_font = pygame.font.get_default_font()
         self.font = pygame.font.Font(default_font, 14)
 
+        self.pending_button = None
+
+    def set_pending_button(self, b):
+        b.toggle_state()
+        self.pending_button = b
+
+    def unset_pending_button(self):
+        self.pending_button.toggle_state()
+        self.pending_button = None
+
     def add_button(self, *args):
         b = Button(self.font, *args)
         b.show()
@@ -23,9 +33,10 @@ class ButtonRegistry(object):
     def process_click(self, ev):
         for b in self.buttons:
             if b.shown and b.rect.collidepoint(ev.pos):
-                pressed = b.toggle_state()
-                if not pressed:
-                    b.cb()
+                if self.pending_button is not None:
+                    self.pending_button.toggle_state()
+                self.set_pending_button(b)
+                b.cb()
                 return True
 
     def draw(self, targ):

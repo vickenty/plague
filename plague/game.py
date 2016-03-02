@@ -8,6 +8,7 @@ import buttons
 import data
 from constants import *
 
+
 class Game (object):
     text_color = (255, 255, 255)
 
@@ -51,6 +52,7 @@ class Game (object):
 
     def cancel_selection(self):
         self.selection = None
+        self.buttons.unset_pending_button()
 
     def find_unit(self, pos):
         for unit in self.units:
@@ -64,7 +66,8 @@ class Game (object):
         for ev in pygame.event.get():
             if ev.type == QUIT:
                 return None
-            if ev.type == pygame.MOUSEBUTTONDOWN or ev.type == pygame.MOUSEBUTTONUP:
+
+            if ev.type == pygame.MOUSEBUTTONUP:
                 if self.selection:
                     if self.buttons.process_click(ev):
                         continue
