@@ -5,4 +5,4 @@ UPDATES_PER_FRAME = 20
 GRID_W = 8
 GRID_H = 8
 SCALE_FACTOR = 3
-UI_FONT = ("dejavu-sans.ttf", 10)
+UI_FONT = ("dejavu-sans.ttf", 9)
