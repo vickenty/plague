@@ -1,3 +1,4 @@
+from __future__ import division
 from pyg import pygame
 import data
 from constants import *
@@ -45,9 +46,9 @@ class ButtonRegistry(object):
 
 
 class Button(object):
-    bg_color = (64, 128, 64)
-    bd_color = (32, 64, 32)
-    fg_color = (255, 255, 255)
+    bg_color = (255, 121, 43)
+    bd_color = (64, 32, 16)
+    fg_color = (0, 0, 0)
     margin = 2
 
     def __init__(self, font, text, cb, x, y, w=None, h=None):
@@ -87,11 +88,12 @@ class SpriteButton(Button):
         # assuming iup and idown have the same dimensions
         self.image_up, self.image_down = img
         w, h = self.image_up.get_size()
+        h += 3
 
         self.rect = pygame.Rect(x, y, w, h)
 
         self.ipos = x, y
-        self.tpos = x + w / 2 - text_w / 2, y + h / 2 - text_h / 2
+        self.tpos = int(x + w / 2 - text_w / 2), int(y + h / 2 - text_h / 2)
         self.cb = cb
         self.shown = False
         self.pressed = False
