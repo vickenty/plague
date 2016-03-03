@@ -128,10 +128,10 @@ class Game (object):
         targ.blit(buf, pos)
 
     def draw_fps(self, targ):
-        self.draw_text(targ, "%.2f" % self.clock.get_fps(), (600, 2))
+        self.draw_text(targ, "%.2f" % self.clock.get_fps(), (220, 2))
 
     def draw_population(self, targ, pop):
         if pop is None:
             return
         cnc_text = "%.2f / %.2f / %.2f" % (pop.good, pop.sick, pop.dead)
-        self.draw_text(targ, cnc_text, (600, 20))
+        self.draw_text(targ, cnc_text, (2, 160))
