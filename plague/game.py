@@ -10,6 +10,7 @@ import unit
 import buttons
 import data
 import newsflash
+import hover_info
 from constants import *
 
 class Ghost (pygame.sprite.Sprite):
@@ -88,6 +89,8 @@ class Game (object):
 
         self.frame = 0
         self.newsflash = None
+
+        self.hover_info = hover_info.HoverInfo((110, 190))
 
     def set_pending_cmd(self, cmd):
         self.need_destination = True
@@ -190,6 +193,8 @@ class Game (object):
         if self.selection:
             self.buttons.draw(disp)
 
+        self.draw_hover_info(disp)
+
         self.draw_fps(disp)
         self.draw_population(disp, self.model.census)
         self.draw_newsflash(disp, self.model.census)
@@ -221,3 +226,14 @@ class Game (object):
         # TODO compute random cool off time
 
         self.newsflash = newsflash.Newsflash(self.news_font, self.text_color, pop, (2, 180))
+
+    def draw_hover_info(self, targ):
+        (mx, my) = pygame.mouse.get_pos()
+        pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
+        m_cell_pos = self.find_cell(pos)
+
+        if m_cell_pos in self.model.grid:
+            cell = self.model.grid[m_cell_pos]
+            pop = cell.pop
+
+            self.hover_info.draw(pop, targ)
