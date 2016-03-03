@@ -54,13 +54,8 @@ class Game (object):
 
     def execute_pending_cmd(self, dst):
         x, y = dst
-        unit = self.selection
-
-        # FIXME do not unblock cells other units are blocking
-        unit.is_blocking = False
-        self.model.grid[self.find_cell((unit.x, unit.y))].unblock()
-
-        unit.set_command("move", x, y, self.pending_cmd)
+        self.unblock_cell()
+        self.selection.set_command("move", x, y, self.pending_cmd)
         self.unset_pending_cmd()
         self.selection = None
 
@@ -82,6 +77,18 @@ class Game (object):
     def cancel_selection(self):
         self.selection = None
         self.unset_pending_cmd()
+
+    def unblock_cell(self):
+        unit = self.selection
+        unit.is_blocking = False
+        x, y = self.find_cell((unit.x, unit.y))
+        for u in self.units:
+            if not u.is_blocking:
+                continue
+            ux, uy = self.find_cell((u.x, u.y))
+            if ux == x and uy == y:
+                return
+        self.model.grid[x, y].unblock()
 
     def find_unit(self, pos):
         for unit in self.units:
