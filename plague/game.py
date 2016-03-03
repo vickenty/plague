@@ -77,7 +77,8 @@ class Game (object):
         return None
 
     def find_cell(self, pos):
-        return 0, 0
+        x, y = pos
+        return int(x / self.renderer.stride_x), int(y / self.renderer.stride_y)
 
     def handle_click(self, ev):
         mx, my = ev.pos
