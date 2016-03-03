@@ -2,12 +2,14 @@ from collections import defaultdict
 
 from pyg import pygame
 from pyg.locals import *
+import random
 
 import sim
 import render
 import unit
 import buttons
 import data
+import newsflash
 from constants import *
 
 class Ghost (pygame.sprite.Sprite):
@@ -70,6 +72,7 @@ class Game (object):
         self.clock = pygame.time.Clock()
 
         self.font = data.load_font(*UI_FONT)
+        self.news_font = data.load_font(*NEWS_FONT)
         self.selection = None
         self.need_destination = False
         self.pending_cmd = None
@@ -84,6 +87,7 @@ class Game (object):
         self.buttons.add_sprite_button("Cancel", self.cancel_selection, 205, 180, (img, img))
 
         self.frame = 0
+        self.newsflash = None
 
     def set_pending_cmd(self, cmd):
         self.need_destination = True
@@ -188,6 +192,7 @@ class Game (object):
 
         self.draw_fps(disp)
         self.draw_population(disp, self.model.census)
+        self.draw_newsflash(disp, self.model.census)
 
         return self
 
@@ -203,3 +208,16 @@ class Game (object):
             return
         cnc_text = "%.2f / %.2f / %.2f" % (pop.good, pop.sick, pop.dead)
         self.draw_text(targ, cnc_text, (2, 160))
+
+    def draw_newsflash(self, targ, pop):
+        news = self.newsflash
+        if news is not None:
+            news.advance()
+            news.draw(targ)
+            if news.finished:
+                self.newsflash = None
+            return
+
+        # TODO compute random cool off time
+
+        self.newsflash = newsflash.Newsflash(self.news_font, self.text_color, pop, (2, 180))
