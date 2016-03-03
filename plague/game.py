@@ -62,6 +62,7 @@ class Game (object):
 
         unit.set_command("move", x, y, self.pending_cmd)
         self.unset_pending_cmd()
+        self.selection = None
 
     def send_reap(self):
         if not self.selection:
