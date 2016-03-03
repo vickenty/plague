@@ -19,8 +19,6 @@ for path in data_dirs:
     except IOError:
         pass
 
-image_cache = {}
-
 if data_dir is None:
     print "Sorry, can't find game data. Please run it from the directory where run_game.py is located."
     sys.exit(1)
@@ -37,10 +35,24 @@ def load_json(name):
     with open(name) as f:
         return json.load(f)
 
+
+def memoize(fn):
+    cache = {}
+    def inner(*args):
+        try:
+            val = cache[args]
+        except KeyError:
+            val = fn(*args)
+            cache[args] = val
+        return val
+    return inner
+
+@memoize
 def load_image(name):
     path = get_path(name)
-    if path in image_cache:
-        return image_cache[path]
-    img = pygame.image.load(path)
-    image_cache[path] = img
-    return img
+    return pygame.image.load(path)
+
+@memoize
+def load_font(name, size):
+    path = get_path(name)
+    return pygame.font.Font(path, size)
