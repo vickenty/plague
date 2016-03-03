@@ -1,6 +1,7 @@
 from pyg import pygame
 from constants import *
 import data
+import anim
 
 
 class Unit (object):
@@ -16,8 +17,9 @@ class Unit (object):
             self.rect.w -= 1
             self.rect.h -= 1
         self.command = self.cmd_idle, ()
-        self.sprite = data.load_image("unit.png")
+        self.sprite_idle = data.load_image("unit.png")
         self.sprite_block = data.load_image("block.png")
+        self.sprite_burn = anim.Anim("flame-8.png", 16, -4, -3)
         self.is_moving = False
         self.is_blocking = False
 
@@ -68,14 +70,22 @@ class Unit (object):
         cmd(*args)
         self.rect.x = int(self.x * GRID_W)
         self.rect.y = int(self.y * GRID_H)
+        self.sprite_burn.update()
 
     def draw(self, targ, selected):
-        if self.is_blocking:
+        cmd, _ = self.command
+        if cmd == self.cmd_block:
             sprite = self.sprite_block
+        elif cmd == self.cmd_burn:
+            sprite = self.sprite_burn
         else:
-            sprite = self.sprite
+            sprite = self.sprite_idle
 
-        targ.blit(sprite, self.rect.topleft)
+        if hasattr(sprite, "draw"):
+            sprite.draw(targ, self.rect.topleft)
+        else:
+            targ.blit(sprite, self.rect.topleft)
+
         if selected:
             pygame.draw.rect(targ, self.selection_color, self.rect, 1)
 
