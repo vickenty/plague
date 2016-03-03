@@ -38,9 +38,10 @@ class Game (object):
 
         img = data.load_image("button-scroll.png")
 
-        self.buttons.add_sprite_button("Reap", self.send_reap, 2, 4, (img, img))
-        self.buttons.add_sprite_button("Burn", self.send_burn, 2, 24, (img, img))
-        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 2, 44, (img, img))
+        self.buttons.add_sprite_button("Reap", self.send_reap, 150, 160, (img, img))
+        self.buttons.add_sprite_button("Burn", self.send_burn, 150, 180, (img, img))
+        self.buttons.add_sprite_button("Block", self.send_burn, 205, 160, (img, img))
+        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 205, 180, (img, img))
 
     def set_pending_cmd(self, cmd):
         self.need_destination = True
