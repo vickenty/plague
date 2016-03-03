@@ -17,7 +17,9 @@ class Unit (object):
             self.rect.h -= 1
         self.command = self.cmd_idle, ()
         self.sprite = data.load_image("unit.png")
+        self.sprite_block = data.load_image("block.png")
         self.is_moving = False
+        self.is_blocking = False
 
     def set_command(self, cmd, *args):
         impl = getattr(self, "cmd_" + cmd)
@@ -47,6 +49,14 @@ class Unit (object):
     def cmd_burn(self, grid):
         grid[self.x, self.y].pop.burn(0.001)  # TODO make configurable?
 
+    def cmd_block(self, grid):
+        self.is_blocking = True
+        grid[self.x, self.y].block()
+
+    def cmd_unblock(self, grid):
+        self.is_blocking = False
+        grid[self.x, self.y].unblock()
+
     def cmd_idle(self):
         pass
 
@@ -60,7 +70,12 @@ class Unit (object):
         self.rect.y = int(self.y * GRID_H)
 
     def draw(self, targ, selected):
-        targ.blit(self.sprite, self.rect.topleft)
+        if self.is_blocking:
+            sprite = self.sprite_block
+        else:
+            sprite = self.sprite
+
+        targ.blit(sprite, self.rect.topleft)
         if selected:
             pygame.draw.rect(targ, self.selection_color, self.rect, 1)
 

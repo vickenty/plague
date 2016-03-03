@@ -78,9 +78,10 @@ class Game (object):
 
         img = data.load_image("button-scroll.png")
 
-        self.buttons.add_sprite_button("Reap", self.send_reap, 2, 4, (img, img))
-        self.buttons.add_sprite_button("Burn", self.send_burn, 2, 24, (img, img))
-        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 2, 44, (img, img))
+        self.buttons.add_sprite_button("Reap", self.send_reap, 150, 160, (img, img))
+        self.buttons.add_sprite_button("Burn", self.send_burn, 150, 180, (img, img))
+        self.buttons.add_sprite_button("Block", self.send_block, 205, 160, (img, img))
+        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 205, 180, (img, img))
 
         self.frame = 0
 
@@ -95,8 +96,10 @@ class Game (object):
 
     def execute_pending_cmd(self, dst):
         x, y = dst
+        self.unblock_cell()
         self.selection.set_command("move", x, y, self.pending_cmd)
         self.unset_pending_cmd()
+        self.selection = None
 
     def send_reap(self):
         if not self.selection:
@@ -108,9 +111,26 @@ class Game (object):
             return
         self.set_pending_cmd(("burn", self.model.grid))
 
+    def send_block(self):
+        if not self.selection:
+            return
+        self.set_pending_cmd(("block", self.model.grid))
+
     def cancel_selection(self):
         self.selection = None
         self.unset_pending_cmd()
+
+    def unblock_cell(self):
+        unit = self.selection
+        unit.is_blocking = False
+        x, y = self.find_cell((unit.x, unit.y))
+        for u in self.units:
+            if not u.is_blocking:
+                continue
+            ux, uy = self.find_cell((u.x, u.y))
+            if ux == x and uy == y:
+                return
+        self.model.grid[x, y].unblock()
 
     def find_unit(self, pos):
         for unit in self.units:
