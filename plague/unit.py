@@ -10,7 +10,7 @@ class Unit (object):
     def __init__(self, x, y):
         self.x = x
         self.y = y
-        self.rect = pygame.Rect(0, 0, GRID_W - 1, GRID_H - 1)
+        self.rect = pygame.Rect(0, 0, GRID_W, GRID_H)
         self.command = self.cmd_idle, ()
         self.sprite = data.load_image("unit.png")
         self.is_moving = False
