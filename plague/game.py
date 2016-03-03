@@ -72,7 +72,7 @@ class Game (object):
     def send_block(self):
         if not self.selection:
             return
-        self.set_pending_cmd("block", self.model.grid)
+        self.set_pending_cmd(("block", self.model.grid))
 
     def cancel_selection(self):
         self.selection = None
