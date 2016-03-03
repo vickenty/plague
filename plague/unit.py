@@ -11,6 +11,10 @@ class Unit (object):
         self.x = x
         self.y = y
         self.rect = pygame.Rect(0, 0, GRID_W, GRID_H)
+        if pygame.version.vernum >= (2, 0, 0):
+            # facepalm
+            self.rect.w -= 1
+            self.rect.h -= 1
         self.command = self.cmd_idle, ()
         self.sprite = data.load_image("unit.png")
         self.is_moving = False
