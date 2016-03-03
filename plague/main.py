@@ -8,12 +8,16 @@ def main():
     pygame.mixer.pre_init(44100)
     pygame.init()
 
-    disp = pygame.display.set_mode((SCREEN_W, SCREEN_H), DOUBLEBUF)
+    size = SCREEN_W * SCALE_FACTOR, SCREEN_H * SCALE_FACTOR
+
+    disp = pygame.display.set_mode(size, DOUBLEBUF)
+    temp = pygame.Surface((SCREEN_W, SCREEN_H))
 
     mode = game.Game()
 
     while mode is not None:
-        mode = mode.update(disp)
+        mode = mode.update(temp)
+        pygame.transform.scale(temp, disp.get_size(), disp)
         pygame.display.flip()
 
     print "Bye."

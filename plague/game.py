@@ -26,11 +26,10 @@ class Game (object):
 
         self.renderer = render.Renderer()
         self.renderer.draw(self.model)
-        self.render_buffer = pygame.Surface(self.renderer.get_size())
 
         self.clock = pygame.time.Clock()
 
-        self.font = pygame.font.Font(pygame.font.get_default_font(), 16)
+        self.font = data.load_font(*UI_FONT)
         self.selection = None
         self.need_destination = False
         self.pending_cmd = None
@@ -40,9 +39,9 @@ class Game (object):
         img = (data.load_image("button-unpressed-grey.png"),
                data.load_image("button-pressed-grey.png"),)
 
-        self.buttons.add_sprite_button("Reap", self.send_reap, 600, 40, img)
-        self.buttons.add_sprite_button("Burn", self.send_burn, 600, 80, img)
-        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 600, 120, img)
+        self.buttons.add_button("Reap", self.send_reap, 2, 4)
+        self.buttons.add_button("Burn", self.send_burn, 2, 24)
+        self.buttons.add_button("Cancel", self.cancel_selection, 2, 44)
 
     def set_pending_cmd(self, cmd):
         self.need_destination = True
@@ -81,6 +80,21 @@ class Game (object):
     def find_cell(self, pos):
         return 0, 0
 
+    def handle_click(self, ev):
+        mx, my = ev.pos
+        pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
+
+        if self.selection:
+            if self.buttons.process_click(pos):
+                return
+
+            if self.need_destination:
+                dst = self.find_cell(pos)
+                self.execute_pending_cmd(dst)
+                return
+
+        self.selection = self.find_unit(pos)
+
     def update(self, disp):
         self.clock.tick(FRAMES_PER_SECOND)
 
@@ -89,22 +103,13 @@ class Game (object):
                 return None
 
             if ev.type == pygame.MOUSEBUTTONUP:
-                if self.selection:
-                    if self.buttons.process_click(ev):
-                        continue
-                    if self.need_destination:
-                        dst = self.find_cell(ev.pos)
-                        self.execute_pending_cmd(dst)
-                        continue
-
-                self.selection = self.find_unit(ev.pos)
+                self.handle_click(ev)
 
         for _ in range(0, UPDATES_PER_FRAME):
             dx, dy = self.model.update()
 
         disp.fill(0)
-        self.renderer.blit(self.render_buffer)
-        disp.blit(self.render_buffer, (0, 0))
+        self.renderer.blit(disp)
 
         for unit in self.units:
             unit.update()

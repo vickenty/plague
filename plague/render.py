@@ -159,9 +159,8 @@ class Renderer (object):
         w, h = self.buf.get_size()
         return w * SCALE_FACTOR, h * SCALE_FACTOR
 
-
     def blit(self, targ):
-        pygame.transform.scale(self.buf, self.get_size(), targ)
+        targ.blit(self.buf, (0, 0))
 
     def get_color(self, cell):
         return (

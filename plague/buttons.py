@@ -1,12 +1,12 @@
 from pyg import pygame
-
+import data
+from constants import *
 
 class ButtonRegistry(object):
     def __init__(self):
         self.buttons = []
 
-        default_font = pygame.font.get_default_font()
-        self.font = pygame.font.Font(default_font, 14)
+        self.font = data.load_font(*UI_FONT)
 
         self.pending_button = None
 
@@ -30,9 +30,9 @@ class ButtonRegistry(object):
         self.buttons.append(b)
         return b
 
-    def process_click(self, ev):
+    def process_click(self, pos):
         for b in self.buttons:
-            if b.shown and b.rect.collidepoint(ev.pos):
+            if b.shown and b.rect.collidepoint(pos):
                 if self.pending_button is not None:
                     self.pending_button.toggle_state()
                 self.set_pending_button(b)
@@ -48,7 +48,7 @@ class Button(object):
     bg_color = (64, 128, 64)
     bd_color = (32, 64, 32)
     fg_color = (255, 255, 255)
-    margin = 8
+    margin = 2
 
     def __init__(self, font, text, cb, x, y, w=None, h=None):
         self.text = font.render(text, True, self.fg_color)
