@@ -40,7 +40,7 @@ class Game (object):
 
         self.buttons.add_sprite_button("Reap", self.send_reap, 150, 160, (img, img))
         self.buttons.add_sprite_button("Burn", self.send_burn, 150, 180, (img, img))
-        self.buttons.add_sprite_button("Block", self.send_burn, 205, 160, (img, img))
+        self.buttons.add_sprite_button("Block", self.send_block, 205, 160, (img, img))
         self.buttons.add_sprite_button("Cancel", self.cancel_selection, 205, 180, (img, img))
 
     def set_pending_cmd(self, cmd):
@@ -54,7 +54,13 @@ class Game (object):
 
     def execute_pending_cmd(self, dst):
         x, y = dst
-        self.selection.set_command("move", x, y, self.pending_cmd)
+        unit = self.selection
+
+        # FIXME do not unblock cells other units are blocking
+        unit.is_blocking = False
+        self.model.grid[self.find_cell((unit.x, unit.y))].unblock()
+
+        unit.set_command("move", x, y, self.pending_cmd)
         self.unset_pending_cmd()
 
     def send_reap(self):
@@ -66,6 +72,11 @@ class Game (object):
         if not self.selection:
             return
         self.set_pending_cmd(("burn", self.model.grid))
+
+    def send_block(self):
+        if not self.selection:
+            return
+        self.set_pending_cmd("block", self.model.grid)
 
     def cancel_selection(self):
         self.selection = None

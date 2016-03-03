@@ -18,6 +18,7 @@ class Unit (object):
         self.command = self.cmd_idle, ()
         self.sprite = data.load_image("unit.png")
         self.is_moving = False
+        self.is_blocking = False
 
     def set_command(self, cmd, *args):
         impl = getattr(self, "cmd_" + cmd)
@@ -46,6 +47,14 @@ class Unit (object):
 
     def cmd_burn(self, grid):
         grid[self.x, self.y].pop.burn(0.001)  # TODO make configurable?
+
+    def cmd_block(self, grid):
+        self.is_blocking = True
+        grid[self.x, self.y].block()
+
+    def cmd_unblock(self, grid):
+        self.is_blocking = False
+        grid[self.x, self.y].unblock()
 
     def cmd_idle(self):
         pass
