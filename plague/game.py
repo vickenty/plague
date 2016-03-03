@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from pyg import pygame
 from pyg.locals import *
 
@@ -8,6 +10,41 @@ import buttons
 import data
 from constants import *
 
+class Ghost (pygame.sprite.Sprite):
+
+    def __init__(self, count, pos_x, pos_y, *groups):
+        if count > 1:
+            label = "%d" % count
+        else:
+            label = ""
+
+        pos_y -= 2
+
+        spr = data.load_image("ghost.png")
+        w, h = spr.get_size()
+
+        fnt = data.load_image("digits.png")
+        fnt_w = 4
+        fnt_h = 5
+
+        txt_x = w + 1
+        txt_y = 2
+
+        self.image = pygame.Surface((txt_x + fnt_w * len(label), h), SRCALPHA)
+        self.image.blit(spr, (0, 0))
+        for i, c in enumerate(label):
+            fnt_x = int(c) * fnt_w
+            self.image.blit(fnt, (txt_x + i * fnt_w, txt_y), (fnt_x, 0, fnt_w, fnt_h))
+
+        self.rect = pygame.Rect(pos_x, pos_y, *self.image.get_size())
+        self.targ_y = pos_y - DEAD_TTL // 2
+
+        pygame.sprite.Sprite.__init__(self, *groups)
+
+    def update(self):
+        self.rect.y -= 1
+        if self.rect.y <= self.targ_y:
+            self.kill()
 
 class Game (object):
     text_color = (255, 255, 255)
@@ -20,6 +57,9 @@ class Game (object):
             unit.Unit(self.model.width // 2, self.model.height // 2),
             unit.Unit(self.model.width // 3, self.model.height // 3),
         ]
+
+        self.ghosts_all = pygame.sprite.Group()
+        self.ghosts_cell = defaultdict(pygame.sprite.Group)
 
         self.units[0].set_command("move", 1, 1, ("idle",))
         self.units[1].set_command("move", 3, 12, ("idle",))
@@ -41,6 +81,8 @@ class Game (object):
         self.buttons.add_sprite_button("Reap", self.send_reap, 2, 4, (img, img))
         self.buttons.add_sprite_button("Burn", self.send_burn, 2, 24, (img, img))
         self.buttons.add_sprite_button("Cancel", self.cancel_selection, 2, 44, (img, img))
+
+        self.frame = 0
 
     def set_pending_cmd(self, cmd):
         self.need_destination = True
@@ -96,6 +138,7 @@ class Game (object):
         self.selection = self.find_unit(pos)
 
     def update(self, disp):
+        self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
 
         for ev in pygame.event.get():
@@ -106,7 +149,10 @@ class Game (object):
                 self.handle_click(ev)
 
         for _ in range(0, UPDATES_PER_FRAME):
-            dx, dy = self.model.update()
+            dx, dy, new_dead = self.model.update()
+            self.ghosts_cell[dx, dy].update()
+            if new_dead > 0 and self.model.grid[dx, dy].view != "field":
+                Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.ghosts_all, self.ghosts_cell[dx, dy])
 
         disp.fill(0)
         self.renderer.blit(disp)
@@ -114,6 +160,8 @@ class Game (object):
         for unit in self.units:
             unit.update()
             unit.draw(disp, self.selection == unit)
+
+        self.ghosts_all.draw(disp)
 
         if self.selection:
             self.buttons.draw(disp)

@@ -6,3 +6,4 @@ GRID_W = 8
 GRID_H = 8
 SCALE_FACTOR = 3
 UI_FONT = ("dejavu-sans.ttf", 9)
+DEAD_TTL = 6

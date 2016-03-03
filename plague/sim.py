@@ -7,6 +7,7 @@ import itertools
 from pop import Population
 from collections import defaultdict
 import data
+from constants import *
 
 class Config (object):
     def __init__(self, conf):
@@ -123,7 +124,7 @@ class Map(object):
 
         self.running_census += curr.pop
 
-        return x, y
+        return x, y, curr.new_dead
 
 class Cell(object):
     def __init__(self, view, attract=0.0, good=0.0, sick=0.0, dead=0.0, has_walls=False, gates=False, sprite_mask=0):
@@ -136,6 +137,11 @@ class Cell(object):
         self.gates = gates
         self.walls = {}
         self.sprite_mask = sprite_mask
+        # new_dead is > 0 when there are new dead bodies in the cell
+        # draw a soul sprite when that happens
+        self.new_dead = 0
+        self.old_dead = 0
+        self.ttl_dead = random.randint(1, DEAD_TTL + 1)
 
     def block(self):
         self.is_blocked = True
@@ -152,6 +158,14 @@ class Cell(object):
         pop = self.pop
 
         pop.kill(0.002)
+
+        self.ttl_dead -= 1
+        if self.ttl_dead == 0:
+            self.new_dead = int(pop.dead - self.old_dead)
+            self.old_dead = int(pop.dead)
+            self.ttl_dead = DEAD_TTL
+        else:
+            self.new_dead = 0
 
         if pop.good == 0.0:
             return
