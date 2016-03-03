@@ -136,24 +136,31 @@ class Renderer (object):
         self.buf.fill(0)
 
         for (x, y), c in m.grid.items():
-            self.draw_one(x, y, c)
+            self.buf.blit(self.tls.get("field"), (x * GRID_W, y * GRID_H))
+
+        for x in range(m.width):
+            for y in range(m.height):
+                c = m.grid[x, y]
+                if c.view == "field": continue
+                self.draw_one(x, y, c)
 
     def draw_one(self, ix, iy, cell):
         dst = ix * GRID_W, iy * GRID_H
-
-        self.buf.blit(self.tls.get("field"), dst)
+        dx, dy = dst
 
         if cell.walls.get((0, -1)):
-            self.buf.blit(self.tls.get("wall-tt"), dst)
+            self.buf.blit(self.tls.get("wall-tt"), (dx, dy - 2))
 
         self.buf.blit(self.tls.get(cell.nview), dst)
 
         if cell.walls.get((-1, 0)):
-            self.buf.blit(self.tls.get("wall-ll"), dst)
+            self.buf.blit(self.tls.get("wall-ll"), (dx - 1, dy))
+            self.buf.blit(self.tls.get("wall-ll"), (dx, dy))
         if cell.walls.get((1, 0)):
-            self.buf.blit(self.tls.get("wall-rr"), dst)
+            self.buf.blit(self.tls.get("wall-rr"), (dx + 1, dy))
+            self.buf.blit(self.tls.get("wall-rr"), (dx, dy))
         if cell.walls.get((0, 1)):
-            self.buf.blit(self.tls.get("wall-bb"), dst)
+            self.buf.blit(self.tls.get("wall-bb"), (dx, dy + 2))
 
     def get_size(self):
         w, h = self.buf.get_size()
