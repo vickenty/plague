@@ -7,7 +7,7 @@ class Unit (object):
     speed = 0.02
     selection_color = (255, 255, 0)
 
-    def __init__(self, x, y):
+    def __init__(self, model, x, y):
         self.x = x
         self.y = y
         self.rect = pygame.Rect(0, 0, GRID_W, GRID_H)
@@ -20,6 +20,7 @@ class Unit (object):
         self.sprite_block = data.load_image("block.png")
         self.is_moving = False
         self.is_blocking = False
+        self.model = model
 
     def set_command(self, cmd, *args):
         impl = getattr(self, "cmd_" + cmd)
@@ -44,7 +45,14 @@ class Unit (object):
         self.y += dy
 
     def cmd_reap(self, grid):
-        grid[self.x, self.y].pop.reap(0.001)  # TODO make configurable?
+        model = self.model
+        grid = model.grid
+        grid[self.x, self.y].pop.reap(REAP_FACTOR)
+        for dx, dy in model.directions:
+            nx, ny = self.x + dx, self.y + dy
+            if not (0 <= nx < model.width and 0 <= ny < model.height):
+                continue
+            grid[nx, ny].pop.reap(REAP_FACTOR)
 
     def cmd_burn(self, grid):
         grid[self.x, self.y].catch_fire()

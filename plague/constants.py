@@ -8,3 +8,4 @@ SCALE_FACTOR = 3
 UI_FONT = ("dejavu-sans.ttf", 9)
 DEAD_TTL = 6
 NEWS_FONT = ("dejavu-sans.ttf", 7)
+REAP_FACTOR = 0.01

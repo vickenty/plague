@@ -57,8 +57,8 @@ class Game (object):
         self.model.load("level1")
 
         self.units = [
-            unit.Unit(self.model.width // 2, self.model.height // 2),
-            unit.Unit(self.model.width // 3, self.model.height // 3),
+            unit.Unit(self.model, self.model.width // 2, self.model.height // 2),
+            unit.Unit(self.model, self.model.width // 3, self.model.height // 3),
         ]
 
         self.ghosts_all = pygame.sprite.Group()

@@ -205,7 +205,7 @@ class Cell(object):
     def update(self):
         pop = self.pop
 
-        pop.kill(0.002)
+        pop.kill(0.02)
 
         self.ttl_dead -= 1
         if self.ttl_dead == 0:
@@ -218,7 +218,7 @@ class Cell(object):
         if pop.good == 0.0:
             return
 
-        ratio = (pop.sick + pop.dead) / pop.good / 100
+        ratio = (pop.sick + pop.dead) / pop.good / 10
         if ratio == 0.0:
             return
 
