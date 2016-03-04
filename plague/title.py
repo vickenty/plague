@@ -13,8 +13,7 @@ class Title (object):
         self.title = data.load_image("title.png")
 
         self.next_mode = self
-        self.model = sim.Map()
-        self.model.load("level1")
+        self.model = sim.Map("level1")
         self.renderer = render.Renderer()
         self.renderer.draw(self.model)
 
