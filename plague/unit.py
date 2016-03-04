@@ -49,7 +49,7 @@ class Unit (object):
         grid[self.x, self.y].pop.reap(0.001)  # TODO make configurable?
 
     def cmd_burn(self, grid):
-        pass
+        grid[self.x, self.y].catch_fire()
 
     def cmd_block(self, grid):
         self.is_blocking = True

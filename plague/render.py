@@ -6,6 +6,7 @@ from pyg.locals import *
 from constants import *
 import data
 
+
 class Tileset (object):
     def __init__(self, name):
         self.name = name
@@ -116,6 +117,7 @@ class Tileset (object):
             print name
             return self.dummy
         return choice(tiles)
+
 
 class Renderer (object):
     max_pop = 10
