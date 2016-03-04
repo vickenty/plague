@@ -13,6 +13,7 @@ import data
 import newsflash
 import hover_info
 import anim
+import mouse
 from constants import *
 
 
@@ -102,10 +103,12 @@ class Game (object):
         self.hover_info = hover_info.HoverInfo((110, 190))
 
     def set_pending_cmd(self, cmd):
+        mouse.set_cursor("target")
         self.need_destination = True
         self.pending_cmd = cmd
 
     def unset_pending_cmd(self):
+        mouse.set_cursor("default")
         self.need_destination = False
         self.pending_cmd = None
         self.buttons.unset_pending_button()

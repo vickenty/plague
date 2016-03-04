@@ -1,12 +1,16 @@
 from pyg import pygame
 from pyg.locals import *
 import game
+import mouse
 
 from constants import *
 
 def main(init_mode=game.Game):
     pygame.mixer.pre_init(44100)
     pygame.init()
+    mouse.init()
+
+    pygame.mouse.set_visible(False)
 
     size = SCREEN_W * SCALE_FACTOR, SCREEN_H * SCALE_FACTOR
 
@@ -21,6 +25,7 @@ def main(init_mode=game.Game):
             print "You suck slightly less than others"
             break
         mode = mode.update(temp)
+        mouse.draw(temp)
         pygame.transform.scale(temp, disp.get_size(), disp)
         pygame.display.flip()
 
