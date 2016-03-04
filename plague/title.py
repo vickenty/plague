@@ -18,11 +18,9 @@ class Title (object):
         self.renderer = render.Renderer()
         self.renderer.draw(self.model)
 
-        img = data.load_image("button-scroll.png")
-
         self.buttons = buttons.ButtonRegistry()
-        self.buttons.add_sprite_button("Play", self.new_game, 150, 160, (img, img))
-        self.buttons.add_sprite_button("Quit", self.quit_game, 205, 180, (img, img))
+        self.buttons.add_sprite_button("Play", self.new_game, 150, 160)
+        self.buttons.add_sprite_button("Quit", self.quit_game, 205, 180)
         
         self.new_mode = self
 

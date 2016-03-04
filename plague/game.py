@@ -88,12 +88,10 @@ class Game (object):
 
         self.buttons = buttons.ButtonRegistry()
 
-        img = data.load_image("button-scroll.png")
-
-        self.buttons.add_sprite_button("Reap", self.send_reap, 150, 160, (img, img))
-        self.buttons.add_sprite_button("Burn", self.send_burn, 150, 180, (img, img))
-        self.buttons.add_sprite_button("Block", self.send_block, 205, 160, (img, img))
-        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 205, 180, (img, img))
+        self.buttons.add_sprite_button("Reap", self.send_reap, 150, 160)
+        self.buttons.add_sprite_button("Burn", self.send_burn, 150, 180)
+        self.buttons.add_sprite_button("Block", self.send_block, 205, 160)
+        self.buttons.add_sprite_button("Cancel", self.cancel_selection, 205, 180)
 
         self.frame = 0
         self.newsflash = None

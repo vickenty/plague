@@ -81,12 +81,17 @@ class Button(object):
 
 
 class SpriteButton(Button):
-    def __init__(self, font, text, cb, x, y, img):
+    def __init__(self, font, text, cb, x, y, img=None):
         self.text = font.render(text, True, self.fg_color)
         text_w, text_h = self.text.get_size()
 
         # assuming iup and idown have the same dimensions
-        self.image_up, self.image_down = img
+        if img:
+            self.image_up, self.image_down = img
+        else:
+            self.image_up = data.load_image("button_up.png")
+            self.image_down = data.load_image("button_dn.png")
+
         w, h = self.image_up.get_size()
         h += 3
 
@@ -108,11 +113,13 @@ class SpriteButton(Button):
 
         if self.pressed:
             img = self.image_down
+            dy = 1
         else:
             img = self.image_up
+            dy = 0
 
-        targ.blit(img, self.ipos)
-        targ.blit(self.text, self.tpos)
+        targ.blit(img, (self.ipos[0], self.ipos[1] + dy))
+        targ.blit(self.text, (self.tpos[0], self.tpos[1] + dy))
 
 
 if __name__ == "__main__":
