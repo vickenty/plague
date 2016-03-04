@@ -29,12 +29,12 @@ class HoverInfo(object):
         scaled_sick = self.scale(pop.sick)
         scaled_dead = self.scale(pop.dead)
 
-        if x > SCREEN_W - INFO_WIDTH * 2.5:
+        if x > GRID_MAX_W * GRID_W - INFO_WIDTH - GRID_W - INFO_OFFSET:
             x = x - INFO_WIDTH - INFO_OFFSET
         else:
             x = x + GRID_W + INFO_OFFSET
 
-        if y > 140:
+        if y > GRID_MAX_H * GRID_H - INFO_HEIGHT - GRID_H - INFO_OFFSET:
             y = y - INFO_HEIGHT - INFO_OFFSET
         else:
             y = y + GRID_H + INFO_OFFSET
