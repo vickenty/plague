@@ -99,7 +99,6 @@ class Map(object):
             self.census = self.running_census
             self.running_census = Population(0.0)
 
-
         curr.update()
 
         cpop = curr.pop
@@ -112,6 +111,12 @@ class Map(object):
                     continue
 
                 n = self.grid[nx, ny]
+
+                if curr.burning:
+                    # FIXME
+                    if random.random() < 0.3:
+                        n.catch_fire()
+
                 if n.is_blocked or curr.walls.get((dx, dy)) or n.walls.get((-dx, -dy)):
                     continue
 
@@ -126,8 +131,20 @@ class Map(object):
 
         return x, y, curr.new_dead
 
+
 class Cell(object):
-    def __init__(self, view, attract=0.0, good=0.0, sick=0.0, dead=0.0, has_walls=False, gates=False, sprite_mask=0):
+    def __init__(
+        self,
+        view,
+        attract=0.0,
+        good=0.0,
+        sick=0.0,
+        dead=0.0,
+        has_walls=False,
+        gates=False,
+        sprite_mask=0,
+        health=0,
+    ):
         self.view = view
         self.nview = view
         self.attract = attract
@@ -143,11 +160,28 @@ class Cell(object):
         self.old_dead = 0
         self.ttl_dead = random.randint(1, DEAD_TTL + 1)
 
+        self.health = health
+        self.burning = False
+        self.burnt = False
+
     def block(self):
         self.is_blocked = True
 
     def unblock(self):
         self.is_blocked = False
+
+    def catch_fire(self):
+        if self.health <= 0 or self.burnt or self.burning:
+            return
+        self.burning = True
+
+    def burn(self):
+        if not self.burning:
+            return
+        self.health -= 1
+        if self.health <= 0:
+            self.burning = False
+            self.burnt = True
 
     def char(self):
         if self.is_blocked:
@@ -175,6 +209,8 @@ class Cell(object):
             return
 
         pop.infect(min(0.1, ratio))
+
+        self.burn()
 
 if __name__ == '__main__':
     m = Map()
