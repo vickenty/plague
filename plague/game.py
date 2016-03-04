@@ -245,22 +245,22 @@ class Game (object):
 
     def draw_cell_hover(self, targ):
         (mx, my) = pygame.mouse.get_pos()
-        pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
-        m_cell_pos = self.find_cell(pos)
+        mpos = mx // SCALE_FACTOR, my // SCALE_FACTOR
+        cpos = self.find_cell(mpos)
 
-        if m_cell_pos not in self.model.grid:
+        if cpos not in self.model.grid:
             return
 
-        (cx, cy) = m_cell_pos
-        cell = self.model.grid[m_cell_pos]
+        (cx, cy) = cpos[0] * GRID_W, cpos[1] * GRID_H
+        cell = self.model.grid[cpos]
 
         highlight_cell = True   # TODO This mode may depend on a game state
         if highlight_cell:
-            targ.blit(self.cell_highlight_image, (GRID_W * cx, GRID_H * cy, 0, 0))
+            targ.blit(self.cell_highlight_image, (cx, cy, 0, 0))
 
         show_cell_stats = True  # TODO This mode may depend on a game state
         if show_cell_stats:
-            self.hover_info.draw(GRID_W * cx, GRID_H * cy, cell.pop, targ)
+            self.hover_info.draw(cx, cy, cell.pop, targ)
 
 
 class GameOver(object):
