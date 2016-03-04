@@ -9,6 +9,15 @@ class Bont (object):
             x = (c % 32) * self.w
             y = (c / 32) * self.h
             targ.blit(self.image, (tx + i * self.w, ty), (x, y, self.w, self.h))
+        return tx + i * self.w
+
+    def render_wrap(self, targ, text, (tx, ty), maxx=150):
+        x = tx
+        for word in text.split(" "):
+            if x + len(word) * self.w > maxx:
+                ty += self.h
+                x = tx
+            x = self.render(targ, word, (x, ty)) + self.w * 2
 
 class Tiny (Bont):
     name = "font-tiny.png"

@@ -21,18 +21,23 @@ class Base (object):
     def draw(self, targ):
         targ.blit(self.face, self.face_pos)
         self.font.render(targ, self.name, self.name_pos)
-        self.font.render(targ, self.text, self.text_pos)
+        self.font.render_wrap(targ, self.text, self.text_pos)
 
 class Unit (Base):
     name = "DOCTOR"
+    face_name = "faces/doctor.png"
+
     messages = {
-        "doctor_prompt": ("faces/doctor.png", "Ready to go"),
+        "prompt": "Ready to go.",
+        "block": "Organise blockade to prevent people from spreading the disease.",
+        "reap": "Prevent people from getting sick by disposing of dead bodies.",
+        "burn": "Cleanse the entire city with fire.",
     }
 
     def __init__(self, what):
         super(Unit, self).__init__()
         self.show = -1
-        self.face_name, self.text = self.messages[what]
+        self.text = self.messages[what]
         self.face = data.load_image(self.face_name)
 
 class Random (Base):

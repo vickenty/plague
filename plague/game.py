@@ -107,6 +107,7 @@ class Game (object):
 
     def set_pending_cmd(self, cmd):
         mouse.set_cursor("target")
+        self.newsflash = newsflash.Unit(cmd[0])
         self.need_destination = True
         self.pending_cmd = cmd
 
@@ -185,7 +186,7 @@ class Game (object):
         self.selection = self.find_unit(pos)
 
         if self.selection:
-            self.newsflash = newsflash.Unit("doctor_prompt")
+            self.newsflash = newsflash.Unit("prompt")
 
     def update(self, disp):
         self.frame += 1
