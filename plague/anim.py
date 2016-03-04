@@ -1,20 +1,24 @@
 import data
+import pygame
 
-class Anim (object):
+class Anim (pygame.sprite.Sprite):
     def __init__(self, name, frame_w, dx=0, dy=0):
-        self.image = data.load_image(name)
+        self.orig = data.load_image(name)
         self.frame_w = frame_w
-        self.frame_h = self.image.get_height()
+        self.frame_h = self.orig.get_height()
         self.frame = 0
-        self.total = self.image.get_width() // frame_w
+        self.total = self.orig.get_width() // frame_w
         self.dx = dx
         self.dy = dy
-    
-    def draw(self, dest, (px, py)):
-        dest.blit(self.image, (px + self.dx, py + self.dy), (int(self.frame) * self.frame_w, 0, self.frame_w, self.frame_h))
+        self.rect = pygame.Rect(dx, dy, self.frame_w, self.frame_h)
+
+        self.update()
 
     def update(self):
-        self.frame = (self.frame + 0.2) % self.total
+        self.image = self.orig.subsurface(
+            (int(self.frame) * self.frame_w, 0, self.frame_w, self.frame_h)
+        )
+        self.frame = (self.frame + 1) % self.total
 
 if __name__ == '__main__':
     import pygame
