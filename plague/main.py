@@ -17,6 +17,9 @@ def main(init_mode=game.Game):
 
     while mode is not None:
         temp.fill(SCREEN_BG)
+        if mode.won:
+            print "You suck slightly less than others"
+            break
         mode = mode.update(temp)
         pygame.transform.scale(temp, disp.get_size(), disp)
         pygame.display.flip()
