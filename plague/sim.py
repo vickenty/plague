@@ -131,7 +131,7 @@ class Map(object):
                 moving.sick = attract_coef * curr.pop.sick
 
                 curr.pop -= moving
-                n.pop += moving
+                n.incoming += moving
 
         self.running_census += curr.pop
 
@@ -160,6 +160,7 @@ class Cell(object):
         self.attract = attract
         self.is_blocked = False
         self.pop = Population(good, sick, dead)
+        self.incoming = Population(0.0)
         self.has_walls = has_walls
         self.gates = gates
         self.walls = {}
@@ -202,6 +203,9 @@ class Cell(object):
 
     def update(self):
         pop = self.pop
+
+        pop += self.incoming
+        self.incoming = Population(0.0)
 
         pop.kill(0.02)
 
