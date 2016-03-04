@@ -84,10 +84,7 @@ class Unit (object):
         else:
             sprite = self.sprite_idle
 
-        if hasattr(sprite, "draw"):
-            sprite.draw(targ, self.rect.topleft)
-        else:
-            targ.blit(sprite, self.rect.topleft)
+        targ.blit(sprite, self.rect.topleft)
 
         if selected:
             pygame.draw.rect(targ, self.selection_color, self.rect, 1)
