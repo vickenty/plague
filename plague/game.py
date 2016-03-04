@@ -198,11 +198,15 @@ class Game (object):
 
         self.draw_hover_info(disp)
 
-        self.draw_fps(disp)
-        self.draw_population(disp, self.model.census)
-        self.draw_newsflash(disp, self.model.census)
+        census = self.model.census
 
-        if pygame.time.get_ticks() >= self.win_time:
+        self.draw_fps(disp)
+        self.draw_population(disp, census)
+        self.draw_newsflash(disp, census)
+
+        if census is not None and census.good < 1.0 and census.sick < 1.0:
+            return GameOver(False)
+        elif pygame.time.get_ticks() >= self.win_time:
             return GameOver(True)
 
         return self
