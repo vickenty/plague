@@ -22,7 +22,6 @@ class Newsflash(object):
         return choice(self.news)
 
     def advance(self):
-        print "Showing: %d" % self.show
         self.show -= 1
         self.finished = self.show == 0
 

@@ -176,10 +176,12 @@ class Game (object):
                 self.handle_click(ev)
 
         for _ in range(0, UPDATES_PER_FRAME):
-            dx, dy, new_dead = self.model.update()
+            dx, dy, new_dead, burning = self.model.update()
             self.ghosts_cell[dx, dy].update()
             if new_dead > 0 and self.model.grid[dx, dy].view != "field":
                 Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.ghosts_all, self.ghosts_cell[dx, dy])
+            for (bx, by) in burning:  # includes burnt
+                self.renderer.draw_one(bx, by, self.model.grid[bx, by])
 
         disp.fill(0)
         self.renderer.blit(disp)

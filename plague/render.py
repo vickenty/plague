@@ -143,7 +143,8 @@ class Renderer (object):
         for x in range(m.width):
             for y in range(m.height):
                 c = m.grid[x, y]
-                if c.view == "field": continue
+                if c.view == "field":
+                    continue
                 self.draw_one(x, y, c)
 
     def draw_one(self, ix, iy, cell):
@@ -153,7 +154,13 @@ class Renderer (object):
         if cell.walls.get((0, -1)):
             self.buf.blit(self.tls.get("wall-tt"), (dx, dy - 2))
 
-        self.buf.blit(self.tls.get(cell.nview), dst)
+        if cell.burning:
+            cell.sprite_burn.draw(self.buf, dst)
+        elif cell.burnt:
+            # TODO cell.sprite_burnt.draw(self.buf, dst)
+            pass
+        else:
+            self.buf.blit(self.tls.get(cell.nview), dst)
 
         if cell.walls.get((-1, 0)):
             self.buf.blit(self.tls.get("wall-ll"), (dx - 1, dy))

@@ -8,6 +8,7 @@ from pop import Population
 from collections import defaultdict
 import data
 from constants import *
+import anim
 
 class Config (object):
     def __init__(self, conf):
@@ -104,6 +105,11 @@ class Map(object):
         cpop = curr.pop
         tpop = cpop.good + cpop.sick + cpop.dead
 
+        burning = []
+
+        if curr.burning:
+            burning.append((x, y))
+
         if tpop > 0:
             for dx, dy in self.directions:
                 nx, ny = x + dx, y + dy
@@ -118,7 +124,8 @@ class Map(object):
                 if curr.burning:
                     # FIXME better conditions for catching fire
                     if random.random() < 0.3:
-                        n.catch_fire()
+                        if n.catch_fire():
+                            burning.append((nx, ny))
 
                 if n.is_blocked:
                     continue
@@ -132,7 +139,7 @@ class Map(object):
 
         self.running_census += curr.pop
 
-        return x, y, curr.new_dead
+        return x, y, curr.new_dead, burning
 
 
 class Cell(object):
@@ -166,6 +173,7 @@ class Cell(object):
         self.health = health
         self.burning = False
         self.burnt = False
+        self.sprite_burn = anim.Anim("flame-8.png", 16, -4, -3)
 
     def block(self):
         self.is_blocked = True
@@ -175,12 +183,14 @@ class Cell(object):
 
     def catch_fire(self):
         if self.health <= 0 or self.burnt or self.burning:
-            return
+            return False
         self.burning = True
+        return True
 
     def burn(self, factor):
         if not self.burning:
             return
+        self.sprite_burn.update()
         self.health -= 1
         self.pop.burn(factor)
         if self.health <= 0:
