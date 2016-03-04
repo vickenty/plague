@@ -115,6 +115,7 @@ class Game (object):
         self.need_destination = False
         self.pending_cmd = None
         self.buttons.unset_pending_button()
+        self.newsflash = None
 
     def execute_pending_cmd(self, dst):
         x, y = dst
@@ -173,11 +174,18 @@ class Game (object):
                 return
 
             if self.need_destination:
+                self.newsflash = None
                 dst = self.find_cell(pos)
                 self.execute_pending_cmd(dst)
                 return
 
+        if self.selection:
+            self.newsflash = None
+
         self.selection = self.find_unit(pos)
+
+        if self.selection:
+            self.newsflash = newsflash.Unit("doctor_prompt")
 
     def update(self, disp):
         self.frame += 1
@@ -206,7 +214,6 @@ class Game (object):
 
         self.draw_fps(disp)
 
-        self.draw_population(disp, census)
         self.draw_newsflash(disp, census)
         self.draw_cell_hover(disp)
 
@@ -233,7 +240,6 @@ class Game (object):
         news = self.newsflash
         if news is not None:
             news.advance()
-            targ.blit(self.advisor_face, (2, 164))
             news.draw(targ)
             if news.finished:
                 self.newsflash = None
@@ -241,7 +247,7 @@ class Game (object):
 
         # TODO compute random cool off time
         if random.random() > 0.8:
-            self.newsflash = newsflash.Newsflash(self.text_color, pop, (38, 164))
+            self.newsflash = newsflash.Random(pop)
 
     def draw_cell_hover(self, targ):
         (mx, my) = pygame.mouse.get_pos()
