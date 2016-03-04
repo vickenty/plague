@@ -205,9 +205,9 @@ class Game (object):
         self.draw_newsflash(disp, census)
 
         if census is not None and census.good < 1.0 and census.sick < 1.0:
-            return GameOver(False)
+            return GameOver(False, census)
         elif pygame.time.get_ticks() >= self.win_time:
-            return GameOver(True)
+            return GameOver(True, census)
 
         return self
 
@@ -251,7 +251,8 @@ class Game (object):
 
 
 class GameOver(object):
-    def __init__(self, won):
+    def __init__(self, won, census):
+        self.census = census
         self.won = won
         self.clock = pygame.time.Clock()
 
