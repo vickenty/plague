@@ -1,5 +1,5 @@
 import data
-import pygame
+from pyg import pygame
 
 class Anim (pygame.sprite.Sprite):
     def __init__(self, name, frame_w, dx=0, dy=0):
@@ -21,7 +21,7 @@ class Anim (pygame.sprite.Sprite):
         self.frame = (self.frame + 1) % self.total
 
 if __name__ == '__main__':
-    import pygame
+    from pyg import pygame
     pygame.init()
 
     disp = pygame.display.set_mode((300, 300))
