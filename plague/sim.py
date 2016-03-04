@@ -112,12 +112,15 @@ class Map(object):
 
                 n = self.grid[nx, ny]
 
+                if curr.walls.get((dx, dy)) or n.walls.get((-dx, -dy)):
+                    continue
+
                 if curr.burning:
-                    # FIXME
+                    # FIXME better conditions for catching fire
                     if random.random() < 0.3:
                         n.catch_fire()
 
-                if n.is_blocked or curr.walls.get((dx, dy)) or n.walls.get((-dx, -dy)):
+                if n.is_blocked:
                     continue
 
                 attract_coef = min(0.25, n.attract * (1.0 + 100 * cpop.dead / tpop))
