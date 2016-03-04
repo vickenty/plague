@@ -260,7 +260,8 @@ class Game (object):
 
         show_cell_stats = True  # TODO This mode may depend on a game state
         if show_cell_stats:
-            self.hover_info.draw(cx, cy, cell.pop, targ)
+            x, y = (cx, cy) if STICK_HOVER_INFO_TO_CELL else mpos
+            self.hover_info.draw(x, y, cell.pop, targ)
 
 
 class GameOver(object):

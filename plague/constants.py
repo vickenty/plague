@@ -11,3 +11,4 @@ NEWS_FONT = ("dejavu-sans.ttf", 8)
 REAP_FACTOR = 0.01
 GAME_NAME = "Life"
 SCREEN_BG = 20, 15, 10
+STICK_HOVER_INFO_TO_CELL = False
