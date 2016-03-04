@@ -83,7 +83,7 @@ class Game (object):
         self.renderer.draw(self.model)
 
         self.clock = pygame.time.Clock()
-        self.win_time = self.model.conf.time*1000
+        self.win_time = self.model.conf.time * FRAMES_PER_SECOND
 
         self.font = bont.Tiny()
         self.news_font = data.load_font(*NEWS_FONT)
@@ -212,7 +212,7 @@ class Game (object):
 
         if census is not None and census.good < 1.0 and census.sick < 1.0:
             return GameOver(False, census)
-        elif pygame.time.get_ticks() >= self.win_time:
+        elif self.frame >= self.win_time:
             return GameOver(True, census)
 
         return self
