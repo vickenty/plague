@@ -49,7 +49,7 @@ class Unit (object):
         grid[self.x, self.y].pop.reap(0.001)  # TODO make configurable?
 
     def cmd_burn(self, grid):
-        grid[self.x, self.y].pop.burn(0.001)  # TODO make configurable?
+        pass
 
     def cmd_block(self, grid):
         self.is_blocking = True

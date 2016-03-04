@@ -178,10 +178,11 @@ class Cell(object):
             return
         self.burning = True
 
-    def burn(self):
+    def burn(self, factor):
         if not self.burning:
             return
         self.health -= 1
+        self.pop.burn(factor)
         if self.health <= 0:
             self.burning = False
             self.burnt = True
@@ -213,7 +214,7 @@ class Cell(object):
 
         pop.infect(min(0.1, ratio))
 
-        self.burn()
+        self.burn(0.001)
 
 if __name__ == '__main__':
     m = Map()
