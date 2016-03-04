@@ -205,7 +205,7 @@ class Game (object):
 
         self.draw_population(disp, census)
         self.draw_newsflash(disp, census)
-        self.draw_hover_info(disp)
+        self.draw_cell_hover(disp)
 
         if census is not None and census.good < 1.0 and census.sick < 1.0:
             return GameOver(False, census)
@@ -240,17 +240,20 @@ class Game (object):
         if random.random() > 0.8:
             self.newsflash = newsflash.Newsflash(self.text_color, pop, (38, 164))
 
-    def draw_hover_info(self, targ):
+    def draw_cell_hover(self, targ):
         (mx, my) = pygame.mouse.get_pos()
         pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
         m_cell_pos = self.find_cell(pos)
 
-        if m_cell_pos in self.model.grid:
-            (cx, cy) = m_cell_pos
-            cell = self.model.grid[m_cell_pos]
-            pop = cell.pop
+        if m_cell_pos not in self.model.grid:
+            return
 
-            self.hover_info.draw(GRID_W * cx, GRID_H * cy, pop, targ)
+        (cx, cy) = m_cell_pos
+        cell = self.model.grid[m_cell_pos]
+
+        show_cell_stats = True
+        if show_cell_stats:
+            self.hover_info.draw(GRID_W * cx, GRID_H * cy, cell.pop, targ)
 
 
 class GameOver(object):
