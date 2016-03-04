@@ -100,7 +100,7 @@ class Game (object):
         self.frame = 0
         self.newsflash = None
 
-        self.hover_info = hover_info.HoverInfo((110, 190))
+        self.hover_info = hover_info.HoverInfo()
 
     def set_pending_cmd(self, cmd):
         mouse.set_cursor("target")
@@ -249,7 +249,8 @@ class Game (object):
         m_cell_pos = self.find_cell(pos)
 
         if m_cell_pos in self.model.grid:
+            (cx, cy) = m_cell_pos
             cell = self.model.grid[m_cell_pos]
             pop = cell.pop
 
-            self.hover_info.draw(pop, targ)
+            self.hover_info.draw(GRID_W * cx, GRID_H * cy, pop, targ)
