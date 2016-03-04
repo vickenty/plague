@@ -11,10 +11,11 @@ import buttons
 import data
 import newsflash
 import hover_info
+import anim
 from constants import *
 
-class Ghost (pygame.sprite.Sprite):
 
+class Ghost (pygame.sprite.Sprite):
     def __init__(self, count, pos_x, pos_y, *groups):
         if count > 1:
             label = "%d" % count
@@ -49,6 +50,13 @@ class Ghost (pygame.sprite.Sprite):
         if self.rect.y <= self.targ_y:
             self.kill()
 
+
+class Fire(anim.Anim):
+    def __init__(self, x, y, *groups):
+        anim.Anim.__init__(self, "flame-8.png", 16, x-4, y-3)
+        pygame.sprite.Sprite.__init__(self, *groups)
+
+
 class Game (object):
     text_color = (255, 255, 255)
 
@@ -61,8 +69,8 @@ class Game (object):
             unit.Unit(self.model, self.model.width // 3, self.model.height // 3),
         ]
 
-        self.ghosts_all = pygame.sprite.Group()
-        self.ghosts_cell = defaultdict(pygame.sprite.Group)
+        self.all_effects = pygame.sprite.Group()
+        self.individual_effects = defaultdict(pygame.sprite.Group)
 
         self.units[0].set_command("move", 1, 1, ("idle",))
         self.units[1].set_command("move", 3, 12, ("idle",))
@@ -176,12 +184,12 @@ class Game (object):
                 self.handle_click(ev)
 
         for _ in range(0, UPDATES_PER_FRAME):
-            dx, dy, new_dead, burning = self.model.update()
-            self.ghosts_cell[dx, dy].update()
+            dx, dy, new_dead, caught_fire = self.model.update()
+            self.individual_effects[dx, dy].update()
             if new_dead > 0 and self.model.grid[dx, dy].view != "field":
-                Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.ghosts_all, self.ghosts_cell[dx, dy])
-            for (bx, by) in burning:  # includes burnt
-                self.renderer.draw_one(bx, by, self.model.grid[bx, by])
+                Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
+            if caught_fire:
+                Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
 
         disp.fill(0)
         self.renderer.blit(disp)
@@ -190,7 +198,7 @@ class Game (object):
             unit.update()
             unit.draw(disp, self.selection == unit)
 
-        self.ghosts_all.draw(disp)
+        self.all_effects.draw(disp)
 
         if self.selection:
             self.buttons.draw(disp)
