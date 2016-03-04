@@ -62,6 +62,9 @@ class Fire(anim.Anim):
 class Game (object):
     text_color = (255, 255, 255)
 
+    cell_highlight_image = pygame.Surface((GRID_W, GRID_H), pygame.SRCALPHA);
+    cell_highlight_image.fill((0xff, 0xff, 0xff, 0x33), (0, 0, GRID_W, GRID_H))
+
     def __init__(self):
         self.model = sim.Map("level1")
 
@@ -251,7 +254,11 @@ class Game (object):
         (cx, cy) = m_cell_pos
         cell = self.model.grid[m_cell_pos]
 
-        show_cell_stats = True
+        highlight_cell = True   # TODO This mode may depend on a game state
+        if highlight_cell:
+            targ.blit(self.cell_highlight_image, (GRID_W * cx, GRID_H * cy, 0, 0))
+
+        show_cell_stats = True  # TODO This mode may depend on a game state
         if show_cell_stats:
             self.hover_info.draw(GRID_W * cx, GRID_H * cy, cell.pop, targ)
 
