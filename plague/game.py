@@ -3,7 +3,6 @@ from collections import defaultdict
 from pyg import pygame
 from pyg.locals import *
 import random
-import time
 
 import sim
 import render
@@ -66,9 +65,6 @@ class Game (object):
     def __init__(self):
         self.model = sim.Map("level1")
 
-        self.win_time = int(time.time()) + self.model.conf.time
-        self.won = False
-
         self.units = [
             unit.Unit(self.model, self.model.width // 2, self.model.height // 2),
             unit.Unit(self.model, self.model.width // 3, self.model.height // 3),
@@ -84,6 +80,7 @@ class Game (object):
         self.renderer.draw(self.model)
 
         self.clock = pygame.time.Clock()
+        self.win_time = self.model.conf.time*1000
 
         self.font = bont.Tiny()
         self.news_font = data.load_font(*NEWS_FONT)
@@ -103,7 +100,7 @@ class Game (object):
         self.frame = 0
         self.newsflash = None
 
-        self.hover_info = hover_info.HoverInfo((110, 190))
+        self.hover_info = hover_info.HoverInfo()
 
     def set_pending_cmd(self, cmd):
         mouse.set_cursor("target")
@@ -183,13 +180,6 @@ class Game (object):
         self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
 
-        for ev in pygame.event.get():
-            if ev.type == QUIT:
-                return None
-
-            if ev.type == pygame.MOUSEBUTTONUP:
-                self.handle_click(ev)
-
         for _ in range(0, UPDATES_PER_FRAME):
             dx, dy, new_dead, caught_fire = self.model.update()
             self.individual_effects[dx, dy].update()
@@ -209,15 +199,18 @@ class Game (object):
         if self.selection:
             self.buttons.draw(disp)
 
-
+        census = self.model.census
 
         self.draw_fps(disp)
-        self.draw_population(disp, self.model.census)
-        self.draw_newsflash(disp, self.model.census)
+
+        self.draw_population(disp, census)
+        self.draw_newsflash(disp, census)
         self.draw_hover_info(disp)
 
-        if int(time.time()) >= self.win_time:
-            self.won = True
+        if census is not None and census.good < 1.0 and census.sick < 1.0:
+            return GameOver(False)
+        elif pygame.time.get_ticks() >= self.win_time:
+            return GameOver(True)
 
         return self
 
@@ -253,7 +246,25 @@ class Game (object):
         m_cell_pos = self.find_cell(pos)
 
         if m_cell_pos in self.model.grid:
+            (cx, cy) = m_cell_pos
             cell = self.model.grid[m_cell_pos]
             pop = cell.pop
 
-            self.hover_info.draw(pop, targ)
+            self.hover_info.draw(GRID_W * cx, GRID_H * cy, pop, targ)
+
+
+class GameOver(object):
+    def __init__(self, won):
+        self.won = won
+        self.clock = pygame.time.Clock()
+
+    def update(self, disp):
+        self.clock.tick(FRAMES_PER_SECOND)
+        if self.won:
+            disp.fill((0, 255, 0))
+        else:
+            disp.fill((255, 0, 0))
+        return self
+
+    def handle_click(self):
+        pass
