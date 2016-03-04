@@ -61,8 +61,7 @@ class Game (object):
     text_color = (255, 255, 255)
 
     def __init__(self):
-        self.model = sim.Map()
-        self.model.load("level1")
+        self.model = sim.Map("level1")
 
         self.units = [
             unit.Unit(self.model, self.model.width // 2, self.model.height // 2),

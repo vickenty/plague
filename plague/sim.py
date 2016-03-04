@@ -11,28 +11,34 @@ from constants import *
 
 
 class Config (object):
-    def __init__(self, conf):
-        self.conf = conf
+    def __init__(self, data):
+        time = data["time"]
+        self.time = time
+        del data["time"]
 
-    def make_cell(self, char):
-        conf = self.conf[char]
-        return Cell(**conf)
+        self.cell = data
+
 
 class Map(object):
-    def __init__(self):
+    def __init__(self, name):
         self.width = None
         self.height = None
         self.grid = {}
         self.census = None
         self.running_census = None
+        self.conf = Config(data.load_json(name + ".cfg"))
+
+        self.load(name)
+
+    def make_cell(self, char):
+        cell_conf = self.conf.cell[char]
+        return Cell(**cell_conf)
 
     def load(self, name):
-        config = Config(data.load_json(name + ".cfg"))
-
-        with data.open(name  + ".map") as src:
+        with data.open(name + ".map") as src:
             for y, line in enumerate(src):
                 for x, char in enumerate(line.strip()):
-                    self.grid[x, y] = config.make_cell(char)
+                    self.grid[x, y] = self.make_cell(char)
 
         self.width = x + 1
         self.height = y + 1
