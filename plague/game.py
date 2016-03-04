@@ -3,7 +3,6 @@ from collections import defaultdict
 from pyg import pygame
 from pyg.locals import *
 import random
-import time
 
 import sim
 import render
@@ -65,8 +64,6 @@ class Game (object):
     def __init__(self):
         self.model = sim.Map("level1")
 
-        self.win_time = int(time.time()) + self.model.conf.time
-
         self.units = [
             unit.Unit(self.model, self.model.width // 2, self.model.height // 2),
             unit.Unit(self.model, self.model.width // 3, self.model.height // 3),
@@ -82,6 +79,7 @@ class Game (object):
         self.renderer.draw(self.model)
 
         self.clock = pygame.time.Clock()
+        self.win_time = self.model.conf.time*1000
 
         self.font = data.load_font(*UI_FONT)
         self.news_font = data.load_font(*NEWS_FONT)
@@ -204,7 +202,7 @@ class Game (object):
         self.draw_population(disp, self.model.census)
         self.draw_newsflash(disp, self.model.census)
 
-        if int(time.time()) >= self.win_time:
+        if pygame.time.get_ticks() >= self.win_time:
             return GameOver(True)
 
         return self
