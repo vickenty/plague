@@ -4,7 +4,7 @@ import game
 
 from constants import *
 
-def main():
+def main(init_mode=game.Game):
     pygame.mixer.pre_init(44100)
     pygame.init()
 
@@ -13,9 +13,10 @@ def main():
     disp = pygame.display.set_mode(size, DOUBLEBUF)
     temp = pygame.Surface((SCREEN_W, SCREEN_H))
 
-    mode = game.Game()
+    mode = init_mode()
 
     while mode is not None:
+        temp.fill(SCREEN_BG)
         mode = mode.update(temp)
         pygame.transform.scale(temp, disp.get_size(), disp)
         pygame.display.flip()

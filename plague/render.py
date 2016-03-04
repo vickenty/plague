@@ -1,5 +1,5 @@
 from collections import defaultdict
-from random import choice
+import random
 from pyg import pygame
 from pyg.locals import *
 
@@ -116,8 +116,7 @@ class Tileset (object):
             #raise ValueError, "missing tile '%s'" % (name,)
             print name
             return self.dummy
-        return choice(tiles)
-
+        return random.choice(tiles)
 
 class Renderer (object):
     max_pop = 10
@@ -129,6 +128,7 @@ class Renderer (object):
 
     def __init__(self):
         self.tls = Tileset("tileset.cfg")
+        random.seed(0)
 
     def fill(self, color):
         self.buf.fill(color)

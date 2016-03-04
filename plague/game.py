@@ -191,7 +191,6 @@ class Game (object):
             if caught_fire:
                 Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
 
-        disp.fill(0)
         self.renderer.blit(disp)
 
         for unit in self.units:
