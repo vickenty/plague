@@ -11,6 +11,8 @@ def main(init_mode=game.Game):
     pygame.init()
     mouse.init()
 
+    pygame.display.set_caption(GAME_NAME)
+
     pygame.mouse.set_visible(False)
 
     size = SCREEN_W * SCALE_FACTOR, SCREEN_H * SCALE_FACTOR
