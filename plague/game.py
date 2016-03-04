@@ -66,7 +66,6 @@ class Game (object):
         self.model = sim.Map("level1")
 
         self.win_time = int(time.time()) + self.model.conf.time
-        self.won = False
 
         self.units = [
             unit.Unit(self.model, self.model.width // 2, self.model.height // 2),
@@ -180,13 +179,6 @@ class Game (object):
         self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
 
-        for ev in pygame.event.get():
-            if ev.type == QUIT:
-                return None
-
-            if ev.type == pygame.MOUSEBUTTONUP:
-                self.handle_click(ev)
-
         for _ in range(0, UPDATES_PER_FRAME):
             dx, dy, new_dead, caught_fire = self.model.update()
             self.individual_effects[dx, dy].update()
@@ -213,7 +205,7 @@ class Game (object):
         self.draw_newsflash(disp, self.model.census)
 
         if int(time.time()) >= self.win_time:
-            self.won = True
+            return GameOver(True)
 
         return self
 
@@ -254,3 +246,20 @@ class Game (object):
             pop = cell.pop
 
             self.hover_info.draw(GRID_W * cx, GRID_H * cy, pop, targ)
+
+
+class GameOver(object):
+    def __init__(self, won):
+        self.won = won
+        self.clock = pygame.time.Clock()
+
+    def update(self, disp):
+        self.clock.tick(FRAMES_PER_SECOND)
+        if self.won:
+            disp.fill((0, 255, 0))
+        else:
+            disp.fill((255, 0, 0))
+        return self
+
+    def handle_click(self):
+        pass
