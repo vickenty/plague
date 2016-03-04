@@ -1,19 +1,22 @@
 from random import choice
-
+import bont
 
 class Newsflash(object):
     news = [
-        "NEWS AT 11: YOU SUCK",
-        "TRUMP HAS BEEN ELECTED",
+        "LIEGE, PLAGUE IS SPREADING",
+        "OUR COUNTRY IS IN DANGER",
+        "PEOPLE ARE SUFFERING, MY LORD",
+        "MY LORD, WE NEED TO SAVE OUR PEOPLE",
+        "LORD BLESS US",
     ]
 
-    def __init__(self, font, color, pop, pos):
-        self.font = font
+    def __init__(self, color, pop, pos):
+        self.font = bont.Tiny()
         self.color = color
         self.pos = pos
         self.pop = pop
 
-        self.show = 200
+        self.show = 90
         self.finished = False
 
         self.text = self.compute_news()
@@ -26,5 +29,4 @@ class Newsflash(object):
         self.finished = self.show == 0
 
     def draw(self, targ):
-        buf = self.font.render(self.text, True, self.color)
-        targ.blit(buf, self.pos)
+        self.font.render(targ, self.text, self.pos)

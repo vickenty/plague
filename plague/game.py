@@ -14,6 +14,7 @@ import newsflash
 import hover_info
 import anim
 import mouse
+import bont
 from constants import *
 
 
@@ -84,7 +85,7 @@ class Game (object):
 
         self.clock = pygame.time.Clock()
 
-        self.font = data.load_font(*UI_FONT)
+        self.font = bont.Tiny()
         self.news_font = data.load_font(*NEWS_FONT)
         self.selection = None
         self.need_destination = False
@@ -96,6 +97,8 @@ class Game (object):
         self.buttons.add_sprite_button("Burn", self.send_burn, 150, 180)
         self.buttons.add_sprite_button("Block", self.send_block, 205, 160)
         self.buttons.add_sprite_button("Cancel", self.cancel_selection, 205, 180)
+
+        self.advisor_face = data.load_image("faces/6p.png")
 
         self.frame = 0
         self.newsflash = None
@@ -206,11 +209,12 @@ class Game (object):
         if self.selection:
             self.buttons.draw(disp)
 
-        self.draw_hover_info(disp)
+
 
         self.draw_fps(disp)
         self.draw_population(disp, self.model.census)
         self.draw_newsflash(disp, self.model.census)
+        self.draw_hover_info(disp)
 
         if int(time.time()) >= self.win_time:
             self.won = True
@@ -218,8 +222,7 @@ class Game (object):
         return self
 
     def draw_text(self, targ, text, pos):
-        buf = self.font.render(text, True, self.text_color)
-        targ.blit(buf, pos)
+        self.font.render(targ, text, pos)
 
     def draw_fps(self, targ):
         self.draw_text(targ, "%.2f" % self.clock.get_fps(), (220, 2))
@@ -234,14 +237,15 @@ class Game (object):
         news = self.newsflash
         if news is not None:
             news.advance()
+            targ.blit(self.advisor_face, (2, 164))
             news.draw(targ)
             if news.finished:
                 self.newsflash = None
             return
 
         # TODO compute random cool off time
-
-        self.newsflash = newsflash.Newsflash(self.news_font, self.text_color, pop, (2, 180))
+        if random.random() > 0.8:
+            self.newsflash = newsflash.Newsflash(self.text_color, pop, (38, 164))
 
     def draw_hover_info(self, targ):
         (mx, my) = pygame.mouse.get_pos()
