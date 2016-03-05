@@ -224,8 +224,7 @@ class Game (object):
         if self.over is not None:
             if self.over:
                 self.draw_game_over(disp, "SUCCESS")
-                newsflash.Victory(census).draw(disp)
-                self.paused = True
+                self.newsflash = newsflash.Victory(census).draw(disp)
                 if self.final_click:
                     n = self.model.next_level()
                     if n is not None:
@@ -233,7 +232,7 @@ class Game (object):
                     return self
             else:
                 self.draw_game_over(disp, "FAIL")
-                newsflash.Loss(census).draw(disp)
+                self.newsflash = newsflash.Loss(census).draw(disp)
                 return self
 
         for unit in self.units:
