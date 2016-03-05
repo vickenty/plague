@@ -94,7 +94,7 @@ class LevelMessage (Base):
     def __init__(self, text, finished_cb):
         super(LevelMessage, self).__init__()
         self.show = 180
-        self.face = data.load_image("faces/6p.png")
+        self.face = data.load_image("faces/13p.png")
         self.text = text
         self.finished_cb = finished_cb
 
