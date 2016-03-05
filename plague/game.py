@@ -290,8 +290,8 @@ class Game (object):
     def draw_stats(self, targ):
         curr_time = self.frame / FRAMES_PER_SECOND
         self.time_to_cure = self.win_duration_sec - curr_time
-        self.draw_text(targ, "ttl: %.0f" % self.time_to_cure, (210, 2))
-        self.draw_text(targ, "save: %.0f" % self.win_living_min_threshold, (200, 12))
+        self.draw_text(targ, " ttl: %5.0f" % self.time_to_cure, (196, 2))
+        self.draw_text(targ, "save: %5.0f" % self.win_living_min_threshold, (196, 12))
 
     def draw_population(self, targ, pop):
         if pop is None:
