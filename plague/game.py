@@ -45,8 +45,7 @@ class Game (object):
         # Win conditions
         self.win_duration_sec    = self.model.conf.game["duration"]
         self.win_duration_frames = self.model.conf.game["duration"] * FRAMES_PER_SECOND
-        self.win_good_min_threshold  = self.model.conf.game["good_min_threshold"]
-        self.win_sick_max_threshold  = self.model.conf.game["sick_max_threshold"]
+        self.win_living_min_threshold  = self.model.conf.game["living_min_threshold"]
 
         self.font = bont.Tiny()
         self.news_font = data.load_font(*NEWS_FONT)
@@ -213,7 +212,7 @@ class Game (object):
 
             if census is not None:
                 # Determine the game outcome: win or defeat
-                if census.good < self.win_good_min_threshold or census.sick > self.win_sick_max_threshold:
+                if (census.good + census.sick) < self.win_living_min_threshold:
                     self.over = False
                 elif self.frame >= self.win_duration_frames:
                     self.over = True
@@ -236,7 +235,7 @@ class Game (object):
                     return title.Title()
             else:
                 self.draw_game_over(disp, "GAME OVER", BACK_TO_MENU)
-                self.newsflash = newsflash.Loss(self.win_good_min_threshold, census).draw(disp)
+                self.newsflash = newsflash.Loss(self.win_living_min_threshold, census).draw(disp)
                 return self if not self.final_click else title.Title()
 
         for unit in self.units:
@@ -271,7 +270,7 @@ class Game (object):
         curr_time = self.frame / FRAMES_PER_SECOND
         self.time_to_cure = self.win_duration_sec - curr_time
         self.draw_text(targ, "ttl: %.0f" % self.time_to_cure, (210, 2))
-        self.draw_text(targ, "save: %.0f" % self.win_good_min_threshold, (200, 12))
+        self.draw_text(targ, "save: %.0f" % self.win_living_min_threshold, (200, 12))
 
     def draw_population(self, targ, pop):
         if pop is None:

@@ -124,8 +124,8 @@ class Victory(Base):
 class Loss(Victory):
     name = "GAME OVER"
 
-    def __init__(self, minimum_good, pop):
-        self.minimum_good = minimum_good
+    def __init__(self, minimum_living, pop):
+        self.minimum_living = minimum_living
         super(Loss, self).__init__(pop)
 
     def compute_news(self):
