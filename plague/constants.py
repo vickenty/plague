@@ -1,7 +1,7 @@
 SCREEN_W = 256
 SCREEN_H = 200
 FRAMES_PER_SECOND = 60
-UPDATES_PER_FRAME = 20
+UPDATES_PER_FRAME = 80
 GRID_W = 8          # Should have been called CELL_W
 GRID_H = 8          # Should have been called CELL_H
 GRID_MAX_W = 32
