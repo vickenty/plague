@@ -4,7 +4,8 @@ from pyg import pygame
 
 
 class Anim (pygame.sprite.Sprite):
-    def __init__(self, name, seq, pos_x, pos_y):
+    def __init__(self, name, seq, pos_x, pos_y, *groups):
+        super(Anim, self).__init__(*groups)
         self.conf = conf = data.load_json(name)
 
         self.sheet = data.load_image(conf["image"])

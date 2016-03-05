@@ -55,9 +55,29 @@ class Ghost (pygame.sprite.Sprite):
 
 class Fire(anim.Anim):
     def __init__(self, x, y, *groups):
-        anim.Anim.__init__(self, "flame-8.cfg", "flame", x, y)
-        pygame.sprite.Sprite.__init__(self, *groups)
+        anim.Anim.__init__(self, "flame-8.cfg", "flame", x, y, *groups)
 
+class Walker (anim.Anim):
+    anims = {
+        (-1, 0): "l",
+        (1, 0): "r",
+        (0, -1): "u",
+        (0, 1): "d",
+    }
+
+    def __init__(self, x, y, dirx, diry, *groups):
+        self.dirx = dirx
+        self.diry = diry
+        self.ttl = 4
+        anim.Anim.__init__(self, "walk.cfg", self.anims[dirx, diry], x, y, *groups)
+
+    def update(self):
+        self.rect.x += self.dirx
+        self.rect.y += self.diry
+        super(Walker, self).update()
+        self.ttl -= 1
+        if self.ttl <= 0:
+            self.kill()
 
 class Game (object):
     text_color = (255, 255, 255)
@@ -72,6 +92,7 @@ class Game (object):
 
         self.all_effects = pygame.sprite.Group()
         self.individual_effects = defaultdict(pygame.sprite.Group)
+        self.all_walkers = pygame.sprite.Group()
 
         self.renderer = render.Renderer()
         self.renderer.draw(self.model)
@@ -186,6 +207,20 @@ class Game (object):
         if self.selection:
             self.newsflash = newsflash.Unit("prompt")
 
+    def update_one(self):
+        dx, dy, new_dead, caught_fire = self.model.update()
+        cell = self.model.grid[dx, dy]
+        self.individual_effects[dx, dy].update()
+        if new_dead > 0 and cell.view != "field":
+            Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
+        if caught_fire:
+            Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
+
+        if cell.last_incoming.alive > 5 and random.random() > 0.9:
+            dirx, diry = random.choice(self.model.directions)
+            nx, ny = dx + dirx, dy + diry
+            Walker(dx * GRID_W, dy * GRID_H, dirx, diry, self.all_effects, self.individual_effects[dx, dy])
+
     def update(self, disp):
         if not self.paused:
             self.frame += 1
@@ -202,15 +237,9 @@ class Game (object):
                     self.over = True
 
             for _ in range(0, UPDATES_PER_FRAME):
-                dx, dy, new_dead, caught_fire = self.model.update()
-                self.individual_effects[dx, dy].update()
-                if new_dead > 0 and self.model.grid[dx, dy].view != "field":
-                    Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
-                if caught_fire:
-                    Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
+                self.update_one()
 
         self.renderer.blit(disp)
-
         self.all_effects.draw(disp)
 
         if self.over is not None:

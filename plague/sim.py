@@ -178,6 +178,7 @@ class Cell(object):
         self.is_blocked = False
         self.pop = Population(good, sick, dead)
         self.incoming = Population(0.0)
+        self.last_incoming = Population(0.0)
         self.has_walls = has_walls
         self.gates = gates
         self.walls = {}
@@ -222,6 +223,7 @@ class Cell(object):
         pop = self.pop
 
         pop += self.incoming
+        self.last_incoming = self.incoming
         self.incoming = Population(0.0)
 
         pop.kill(0.02)

@@ -52,6 +52,10 @@ class Population (object):
         self.sick -= self.sick * factor
         self.dead -= self.dead * factor
 
+    @property
+    def alive(self):
+        return self.good + self.sick
+
     def __str__(self):
         return "% 6.1fg % 6.1fs % 6.1fd" % (self.good, self.sick, self.dead)
 
