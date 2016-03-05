@@ -9,6 +9,9 @@ from collections import defaultdict
 import data
 from constants import *
 
+# proportion of population (healthy, sick, and dead) that's reduced per update
+# when burning
+BURN_FACTOR = 0.5
 
 class Config (object):
     def __init__(self, data):
@@ -245,7 +248,7 @@ class Cell(object):
 
         pop.infect(min(0.1, ratio))
 
-        self.burn(0.001)
+        self.burn(BURN_FACTOR)
 
 if __name__ == '__main__':
     m = Map()
