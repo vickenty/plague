@@ -1,4 +1,4 @@
-import pygame
+from pyg import pygame
 import anim
 import data
 from constants import *
