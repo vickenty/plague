@@ -2,7 +2,6 @@ from random import choice, random
 import bont
 import data
 
-
 class Base (object):
     face_pos = 2, 164
     name_pos = 38, 164
@@ -50,6 +49,7 @@ class Random (Base):
         "Dead: {dead}",
         "Sick: {sick}",
         "Healthy: {good}",
+        "Time to cure: {cure} seconds",
     ]
     bad_news = [
         "There are dead bodies on the streets"
@@ -64,10 +64,11 @@ class Random (Base):
         "Something suspicious is going on",
     ]
 
-    def __init__(self, pop):
+    def __init__(self, curr_time, pop, human_win_time):
         super(Random, self).__init__()
         self.face = data.load_image("faces/6p.png")
         self.pop = pop
+        self.time_to_cure = human_win_time - curr_time
         self.text = self.compute_news()
 
     def compute_news(self):
@@ -84,6 +85,7 @@ class Random (Base):
             good=int(self.pop.good),
             sick=int(self.pop.sick),
             dead=int(self.pop.dead),
+            cure=int(self.time_to_cure),
         )
 
 class LevelMessage (Base):

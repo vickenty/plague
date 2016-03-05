@@ -259,8 +259,10 @@ class Game (object):
             return
 
         if self.frame >= self.next_newsflash and pop is not None:
-            self.newsflash = newsflash.Random(pop)
-            self.next_newsflash = self.frame + random.randint(15 * FRAMES_PER_SECOND, 40 * FRAMES_PER_SECOND)
+            curr_time = self.frame / FRAMES_PER_SECOND
+            human_win_time = self.model.conf.time
+            self.newsflash = newsflash.Random(curr_time, pop, human_win_time)
+            self.next_newsflash = self.frame + random.randint(5 * FRAMES_PER_SECOND, 10 * FRAMES_PER_SECOND)
 
     def draw_cell_hover(self, targ):
         (mx, my) = pygame.mouse.get_pos()
