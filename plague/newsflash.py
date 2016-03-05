@@ -1,6 +1,7 @@
 from random import choice, random
 import bont
 import data
+from constants import *
 
 class Base (object):
     face_pos = 2, 164
@@ -90,12 +91,13 @@ class Random (Base):
 
 
 class LevelMessage (Base):
-    name = "TUTORIAL"
-
-    def __init__(self, text, finished_cb):
+    def __init__(self, face, name, text, finished_cb):
         super(LevelMessage, self).__init__()
-        self.show = 180
-        self.face = data.load_image("faces/13p.png")
+        self.name = name
+
+        # deliberately long: tutorial and story elements
+        self.show = 15 * FRAMES_PER_SECOND
+        self.face = data.load_image("faces/" + face)
         self.text = text
         self.finished_cb = finished_cb
 

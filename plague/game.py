@@ -66,7 +66,8 @@ class Game (object):
 
         self.frame = 0
         self.newsflash = None
-        self.next_newsflash = 0
+        # don't fire a newsflash right away
+        self.next_newsflash = 5 * FRAMES_PER_SECOND
 
         self.hover_info = hover_info.HoverInfo()
 
@@ -306,7 +307,7 @@ class Game (object):
                 def finished_cb():
                     self.paused = False
 
-                self.newsflash = newsflash.LevelMessage(message["msg"], finished_cb)
+                self.newsflash = newsflash.LevelMessage(message["face"], message["name"], message["msg"], finished_cb)
 
     def compute_next_level(self):
         if not self.auto_progress:
