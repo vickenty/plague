@@ -21,6 +21,7 @@ class Unit (object):
         self.is_moving = False
         self.is_blocking = False
         self.model = model
+        self.scream_sample = data.load_sample("aaaargh.wav")
 
     def set_command(self, cmd, *args):
         impl = getattr(self, "cmd_" + cmd)
@@ -57,6 +58,8 @@ class Unit (object):
 
     def cmd_burn(self, grid):
         grid[self.x, self.y].catch_fire()
+        self.scream_sample.play()
+        self.set_command("idle")
 
     def cmd_block(self, grid):
         self.is_blocking = True
