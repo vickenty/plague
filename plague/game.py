@@ -132,6 +132,10 @@ class Game (object):
         mx, my = ev.pos
         pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
         if self.paused:
+            # unpause and finish newsflash
+            self.paused = False
+            if self.newsflash is not None:
+                self.newsflash.show = 0
             return
 
         if self.selection:
@@ -244,7 +248,7 @@ class Game (object):
         if self.frame >= self.next_newsflash and pop is not None:
             curr_time = self.frame / FRAMES_PER_SECOND
             self.newsflash = newsflash.Random(curr_time, pop, self.win_duration_sec)
-            self.next_newsflash = self.frame + random.randint(5 * FRAMES_PER_SECOND, 10 * FRAMES_PER_SECOND)
+            self.next_newsflash = self.frame + random.randint(1 * FRAMES_PER_SECOND, 5 * FRAMES_PER_SECOND)
 
     def draw_cell_hover(self, targ):
         (mx, my) = pygame.mouse.get_pos()
