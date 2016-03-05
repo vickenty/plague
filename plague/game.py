@@ -281,7 +281,7 @@ class Game (object):
         for unit in self.units:
             if not self.paused:
                 unit.update()
-            if unit.command[0] == unit.cmd_reap and random.random() > 0.96:
+            if not self.paused and self.over is None and unit.command[0] == unit.cmd_reap and random.random() > 0.96:
                 effects.Plus(unit.x * GRID_W, unit.y * GRID_H, self.all_effects, self.individual_effects[unit.x, unit.y])
             unit.draw(disp, self.selection == unit, self.paused)
 
