@@ -176,10 +176,15 @@ class Game (object):
         if caught_fire:
             effects.Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
 
-        if cell.last_incoming.alive > 5 and random.random() > 0.9:
-            dirx, diry = random.choice(self.model.directions)
-            nx, ny = dx + dirx, dy + diry
-            effects.Walker(dx * GRID_W, dy * GRID_H, dirx, diry, self.all_effects, self.individual_effects[dx, dy])
+        flow_dir = max(cell.incoming_acu.keys(), key=lambda d: cell.incoming_acu[d])
+        if cell.incoming_acu[flow_dir] >= POP_FLOW_ALIVE_NR_TRIGGER:
+            dirx, diry = flow_dir
+            # Shift animation to the cell-origin of the flow
+            dx, dy = dx - dirx, dy - diry
+            # Do not fire up more than one animation effect at the same time
+            if len(self.individual_effects[dx, dy]) == 0 and random.random() <= POP_FLOW_PROBABILiTY_TRIGGER:
+                effects.Walker(dx * GRID_W, dy * GRID_H, dirx, diry, self.all_effects, self.individual_effects[dx, dy])
+            cell.incoming_acu[flow_dir] = 0.0
 
     def update(self, disp):
         census = self.model.census
