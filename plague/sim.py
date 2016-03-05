@@ -13,6 +13,7 @@ from constants import *
 # when burning
 BURN_FACTOR = 0.5
 
+
 class Config (object):
     def __init__(self, data):
         self.messages = {}

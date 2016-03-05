@@ -3,11 +3,12 @@ from pyg.locals import *
 import game
 import mouse
 import data
+import title
 
 from constants import *
 
 
-def main(init_mode=game.Game):
+def main(init_mode=title.Title):
     pygame.mixer.pre_init(44100)
     pygame.init()
     mouse.init()

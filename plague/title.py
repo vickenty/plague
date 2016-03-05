@@ -7,6 +7,7 @@ import data
 import sim
 import render
 import game
+import sim
 
 class Title (object):
     def __init__(self):
@@ -19,12 +20,16 @@ class Title (object):
 
         self.buttons = buttons.ButtonRegistry()
         self.buttons.add_sprite_button("Play", self.new_game, 150, 160)
+        self.buttons.add_sprite_button("Tutorial", self.new_tutorial, 150, 180)
         self.buttons.add_sprite_button("Quit", self.quit_game, 205, 180)
-        
+
         self.new_mode = self
 
+    def new_tutorial(self):
+        self.new_mode = game.Game(sim.Map("tut0"))
+
     def new_game(self):
-        self.new_mode = game.Game()
+        self.new_mode = game.Game(sim.Map("level1"))
 
     def quit_game(self):
         self.new_mode = None
@@ -43,7 +48,7 @@ class Title (object):
 
             if ev.type == pygame.MOUSEBUTTONUP:
                 self.handle_click(ev)
-        
+
         self.renderer.blit(targ)
         targ.blit(self.title, (2, 2))
 

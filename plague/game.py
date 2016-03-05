@@ -4,7 +4,6 @@ from pyg import pygame
 from pyg.locals import *
 import random
 
-import sim
 import render
 import unit
 import buttons
@@ -23,8 +22,8 @@ class Game (object):
     cell_highlight_image = pygame.Surface((GRID_W, GRID_H), pygame.SRCALPHA);
     cell_highlight_image.fill((0xff, 0xff, 0xff, 0x33), (0, 0, GRID_W, GRID_H))
 
-    def __init__(self):
-        self.model = sim.Map("level1")
+    def __init__(self, map):
+        self.model = map
 
         self.units = [unit.Unit(self.model, x, y) for x, y in self.model.conf.units]
 
