@@ -160,7 +160,7 @@ class Map(object):
         if curr.burning:
             self.caught_fire[x, y] = False
 
-        return x, y, curr.new_dead, caught_fire
+        return x, y, curr.new_dead, curr.new_sick, caught_fire
 
 
 class Cell(object):
@@ -192,6 +192,11 @@ class Cell(object):
         self.new_dead = 0
         self.old_dead = 0
         self.ttl_dead = random.randint(1, DEAD_TTL + 1)
+        # new_sick is > 0 when there are new sick people in the cell
+        # draw an infection animation that happens
+        self.new_sick = 0
+        self.old_sick = 0
+        self.ttl_sick = random.randint(1, DEAD_TTL + 1)
 
         self.health = health
         self.burning = False
@@ -239,6 +244,14 @@ class Cell(object):
             self.ttl_dead = DEAD_TTL
         else:
             self.new_dead = 0
+
+        self.ttl_sick -= 1
+        if self.ttl_sick == 0:
+            self.new_sick = int(pop.dead - self.old_dead)
+            self.old_sick = int(pop.dead)
+            self.ttl_sick = DEAD_TTL
+        else:
+            self.new_sick = 0
 
         if pop.good == 0.0:
             return

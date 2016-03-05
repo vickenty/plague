@@ -66,3 +66,15 @@ class Walker (anim.Anim):
         self.ttl -= 1
         if self.ttl <= 0:
             self.kill()
+
+
+class Infection(anim.Anim):
+    def __init__(self, x, y, *groups):
+        self.ttl = 4
+        anim.Anim.__init__(self, "flame-8.cfg", "flame", x, y, *groups)
+
+    def update(self):
+        anim.Anim.update(self)
+        self.ttl -= 1
+        if self.ttl <= 0:
+            self.kill()

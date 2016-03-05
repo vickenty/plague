@@ -158,11 +158,13 @@ class Game (object):
             self.newsflash = newsflash.Unit("prompt")
 
     def update_one(self):
-        dx, dy, new_dead, caught_fire = self.model.update()
+        dx, dy, new_dead, new_sick, caught_fire = self.model.update()
         cell = self.model.grid[dx, dy]
         self.individual_effects[dx, dy].update()
         if new_dead > 0 and cell.view != "field":
             effects.Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
+        if new_sick > 0:
+            effects.Infection(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
         if caught_fire:
             effects.Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
 
