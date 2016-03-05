@@ -19,8 +19,14 @@ class Title (object):
         self.renderer = render.Renderer()
         self.renderer.draw(self.model)
 
+        def play_level(n):
+            def build_level():
+                self.new_mode = game.Game(sim.Map("level" + str(n)))
+            return build_level
+
         self.buttons = buttons.ButtonRegistry()
-        self.buttons.add_sprite_button("Play", self.new_game, 150, 160)
+        self.buttons.add_sprite_button("Level 1", play_level(1), 150, 160)
+        self.buttons.add_sprite_button("Level 2", play_level(2), 205, 160)
         self.buttons.add_sprite_button("Tutorial", self.new_tutorial, 150, 180)
         self.buttons.add_sprite_button("Quit", self.quit_game, 205, 180)
 
@@ -30,9 +36,6 @@ class Title (object):
 
     def new_tutorial(self):
         self.new_mode = game.Game(sim.Map("tut1"))
-
-    def new_game(self):
-        self.new_mode = game.Game(sim.Map("level1"))
 
     def quit_game(self):
         self.new_mode = None
