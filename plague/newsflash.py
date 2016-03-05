@@ -86,6 +86,21 @@ class Random (Base):
             dead=int(self.pop.dead),
         )
 
+class LevelMessage (Base):
+    name = "TUTORIAL"
+
+    def __init__(self, text, finished_cb):
+        super(LevelMessage, self).__init__()
+        self.show = 180
+        self.face = data.load_image("faces/6p.png")
+        self.text = text
+        self.finished_cb = finished_cb
+
+    def advance(self):
+        self.show -= 1
+        self.finished = self.show == 0
+        if self.finished:
+            self.finished_cb()
 
 class Victory(Random):
     def compute_news(self):

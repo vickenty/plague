@@ -101,6 +101,7 @@ class Game (object):
         self.hover_info = hover_info.HoverInfo()
 
         self.over = None
+        self.paused = False
 
     def set_pending_cmd(self, cmd):
         mouse.set_cursor("target", 160)
@@ -186,11 +187,14 @@ class Game (object):
             self.newsflash = newsflash.Unit("prompt")
 
     def update(self, disp):
-        self.frame += 1
+        if not self.paused:
+            self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
 
         census = self.model.census
-        if self.over is None:
+        if self.over is None and not self.paused:
+            self.play_level_message()
+
             if census is not None:
                 if census.good < 1.0:  # and census.sick < 1.0:
                     self.over = False
@@ -218,7 +222,8 @@ class Game (object):
                 return self
 
         for unit in self.units:
-            unit.update()
+            if not self.paused:
+                unit.update()
             unit.draw(disp, self.selection == unit)
 
         if self.selection:
@@ -228,8 +233,7 @@ class Game (object):
 
         self.draw_cell_hover(disp)
 
-        if census is not None:
-            self.draw_newsflash(disp, census)
+        self.draw_newsflash(disp, census)
 
         return self
 
@@ -254,7 +258,7 @@ class Game (object):
                 self.newsflash = None
             return
 
-        if self.frame >= self.next_newsflash:
+        if self.frame >= self.next_newsflash and pop is not None:
             self.newsflash = newsflash.Random(pop)
             self.next_newsflash = self.frame + random.randint(15 * FRAMES_PER_SECOND, 40 * FRAMES_PER_SECOND)
 
@@ -277,3 +281,21 @@ class Game (object):
         if show_cell_stats:
             x, y = (cx, cy) if STICK_HOVER_INFO_TO_CELL else mpos
             self.hover_info.draw(x, y, cell.pop, targ)
+
+    def play_level_message(self):
+        game_time = self.frame / FRAMES_PER_SECOND
+        level_messages = self.model.conf.messages
+        if game_time in level_messages:
+            message = level_messages[game_time]
+            del level_messages[game_time]
+            if self.newsflash is None:
+                if self.selection:
+                    self.cancel_selection()
+                self.paused = True
+                def finished_cb():
+                    self.paused = False
+
+                self.newsflash = newsflash.LevelMessage(message, finished_cb)
+            else:
+                # push the message off into the future
+                level_messages[game_time + 1] = message
