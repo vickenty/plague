@@ -8,6 +8,7 @@ import sim
 import render
 import game
 import sim
+from music import music
 
 class Title (object):
     def __init__(self):
@@ -24,6 +25,8 @@ class Title (object):
         self.buttons.add_sprite_button("Quit", self.quit_game, 205, 180)
 
         self.new_mode = self
+
+        music.enqueue("major")
 
     def new_tutorial(self):
         self.new_mode = game.Game(sim.Map("tut0"), True, 2)
@@ -42,6 +45,8 @@ class Title (object):
             return
 
     def update(self, targ):
+        music.update(0.0)
+
         for ev in pygame.event.get():
             if ev.type == QUIT:
                 return None

@@ -15,6 +15,7 @@ import mouse
 import bont
 import effects
 import sim
+from music import music
 from constants import *
 
 
@@ -71,6 +72,8 @@ class Game (object):
 
         self.over = None
         self.paused = False
+
+        music.enqueue("minor1")
 
     def set_pending_cmd(self, cmd):
         mouse.set_cursor("target", 160)
@@ -178,11 +181,20 @@ class Game (object):
             effects.Walker(dx * GRID_W, dy * GRID_H, dirx, diry, self.all_effects, self.individual_effects[dx, dy])
 
     def update(self, disp):
+        census = self.model.census
+
+        if census is None:
+            music.update(1.0)
+        elif census.alive > 1.0:
+            print census.good / census.alive
+            music.update(1 - min(1, max(0, census.good / census.alive)))
+        else:
+            music.update(0.0)
+        
         if not self.paused:
             self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
 
-        census = self.model.census
         if self.over is None and not self.paused:
             # let the doc warp to the starting location
             if self.frame > 1:

@@ -4,14 +4,19 @@ import game
 import mouse
 import data
 import title
+from music import music
 
 from constants import *
-
 
 def main(init_mode=title.Title):
     pygame.mixer.pre_init(44100)
     pygame.init()
+    pygame.mixer.set_num_channels(32)
     mouse.init()
+
+    music.load()
+    music.reset("major")
+    music.play()
 
     pygame.display.set_caption(GAME_NAME)
 

@@ -1,3 +1,4 @@
+from pyg import pygame
 from constants import *
 import data
 from heapq import *
@@ -38,7 +39,6 @@ class Channel (object):
 
     def update(self, modifier):
         eff_target = max(0, self.target + modifier)
-        print self.name, eff_target
         dv = eff_target - self.volume
         if abs(dv) < self.CLIP:
             self.set_volume(eff_target)
@@ -61,7 +61,7 @@ class Music (object):
         #Channel("perc_cymbal", "music/perc_cymbal_1bar.ogg"),
         #Channel("perc_gong", "music/perc_gong_1bar.ogg"),
         Channel("perc_snare", "music/perc_snare_4bar.ogg"),
-        Channel("perc_triangle", "music/perc_triangle_4bar.ogg"),
+        #Channel("perc_triangle", "music/perc_triangle_4bar.ogg"),
         Channel("pizzicato", "music/pizzicato_8bar.ogg"),
         Channel("pizzicato_dim", "music/pizzicato_dim_8bar.ogg"),
         Channel("strings_low", "music/strings_low_8bar.ogg"),
@@ -127,6 +127,7 @@ class Music (object):
     }
 
     def __init__(self):
+        self.loaded = False
         self.preset = None
 
         self.last_tick = 0
@@ -138,6 +139,7 @@ class Music (object):
     def load(self):
         for chan in self.channels:
             chan.load()
+        self.loaded = True
 
     def play(self):
         for chan in self.channels:
@@ -153,6 +155,10 @@ class Music (object):
             chan.target = volume
 
     def switch(self, name):
+        if not self.loaded:
+            self.reset(name)
+            return
+
         self.preset = name
         preset = self.presets[name]
 
@@ -160,7 +166,6 @@ class Music (object):
             chan.target = preset.get(chan.name, 0.0)
 
     def enqueue(self, name):
-        print name
         self.next_preset = name
 
     def update(self, modifier):
@@ -178,6 +183,8 @@ class Music (object):
         self.play_time += curr_tick - self.last_tick
         self.last_tick = curr_tick
 
+music = Music()
+
 if __name__ == '__main__':
     from pyg import pygame
     from pyg.locals import *
@@ -189,7 +196,6 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
     disp = pygame.display.set_mode((200, 200))
 
-    music = Music()
     
     sequence = ["major", "minor1", "minor2", "diminished" ]
     sequence.reverse()
