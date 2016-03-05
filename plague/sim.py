@@ -21,6 +21,10 @@ class Config (object):
         self.units = data["units"]
         del data["units"]
 
+        self.next_level = data.get("next")
+        if self.next_level is not None:
+            del data["next"]
+
         self.cell = data
 
 
@@ -39,6 +43,12 @@ class Map(object):
     def make_cell(self, char):
         cell_conf = self.conf.cell[char]
         return Cell(**cell_conf)
+
+    def next_level(self):
+        n = self.conf.next_level
+        if n is not None:
+            return Map(n)
+        return None
 
     def load(self, name):
         with data.open(name + ".map") as src:

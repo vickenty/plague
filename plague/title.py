@@ -29,10 +29,10 @@ class Title (object):
         music.enqueue("major")
 
     def new_tutorial(self):
-        self.new_mode = game.Game(sim.Map("tut0"), True, 2)
+        self.new_mode = game.Game(sim.Map("tut0"))
 
     def new_game(self):
-        self.new_mode = game.Game(sim.Map("level1"), False, 1)
+        self.new_mode = game.Game(sim.Map("level1"))
 
     def quit_game(self):
         self.new_mode = None

@@ -25,11 +25,8 @@ class Game (object):
     cell_highlight_image = pygame.Surface((GRID_W, GRID_H), pygame.SRCALPHA);
     cell_highlight_image.fill((0xff, 0xff, 0xff, 0x33), (0, 0, GRID_W, GRID_H))
 
-    def __init__(self, m, auto_progress=False, max_level=None):
+    def __init__(self, m):
         self.model = m
-
-        self.auto_progress = auto_progress
-        self.max_level = max_level
 
         self.units = [unit.Unit(self.model, x, y) for x, y in self.model.conf.units]
 
@@ -195,7 +192,7 @@ class Game (object):
             music.update(1 - min(1, max(0, census.good / census.alive)))
         else:
             music.update(0.0)
-        
+
         if not self.paused:
             self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
@@ -222,11 +219,10 @@ class Game (object):
         if self.over is not None:
             if self.over:
                 self.draw_game_over(disp, "SUCCESS")
-                if self.auto_progress:
-                    n = self.compute_next_level()
-                    if n is not None:
-                        return n
                 newsflash.Victory(census).draw(disp)
+                n = self.model.next_level()
+                if n is not None:
+                    return Game(n)
                 return self
             else:
                 self.draw_game_over(disp, "FAIL")
@@ -312,18 +308,3 @@ class Game (object):
                     self.paused = False
 
                 self.newsflash = newsflash.LevelMessage(message["face"], message["name"], message["msg"], finished_cb)
-
-    def compute_next_level(self):
-        if not self.auto_progress:
-            return None
-
-        m = re.search("(\d+)$", self.model.name)
-        if m is None or self.max_level <= int(m.group(0))+1:
-            return None
-
-        n = re.sub(
-            "(\d+)$",
-            lambda x: str(int(x.group(0))+1),
-            self.model.name,
-        )
-        return Game(sim.Map(n))
