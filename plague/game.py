@@ -179,6 +179,7 @@ class Game (object):
             effects.Infection(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
         if caught_fire:
             effects.Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
+        
 
         flow_dir = max(cell.incoming_acu.keys(), key=lambda d: cell.incoming_acu[d])
         if cell.incoming_acu[flow_dir] >= POP_FLOW_ALIVE_NR_TRIGGER:
@@ -241,6 +242,8 @@ class Game (object):
         for unit in self.units:
             if not self.paused:
                 unit.update()
+            if unit.command[0] == unit.cmd_reap and random.random() > 0.96:
+                effects.Plus(unit.x * GRID_W, unit.y * GRID_H, self.all_effects, self.individual_effects[unit.x, unit.y])
             unit.draw(disp, self.selection == unit, self.paused)
 
         if self.selection:

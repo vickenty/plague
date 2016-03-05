@@ -1,4 +1,5 @@
 from pyg import pygame
+import random
 import anim
 import data
 from constants import *
@@ -40,10 +41,27 @@ class Ghost (pygame.sprite.Sprite):
             self.kill()
 
 
+class Plus (pygame.sprite.Sprite):
+    def __init__(self, pos_x, pos_y, *groups):
+        pygame.sprite.Sprite.__init__(self, *groups)
+
+        pos_x += GRID_W * random.randint(-1, 1)
+        pos_y += GRID_H * random.randint(-1, 1)
+
+        pos_y -= 2
+        self.targ_y = pos_y - 6
+
+        self.image = data.load_image("plus.png")
+        self.rect = pygame.Rect(pos_x, pos_y, GRID_W, GRID_H)
+
+    def update(self):
+        self.rect.y -= 1
+        if self.rect.y <= self.targ_y:
+            self.kill()
+
 class Fire(anim.Anim):
     def __init__(self, x, y, *groups):
         anim.Anim.__init__(self, "flame-8.cfg", "flame", x, y, *groups)
-
 
 class Walker (anim.Anim):
     anims = {
