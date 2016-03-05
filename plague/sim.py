@@ -113,6 +113,7 @@ class Map(object):
     caught_fire = defaultdict(lambda: True)
 
     def update(self):
+        random.shuffle(self.directions)
         moving = Population(0.0)
         x, y = next(self.order_iter)
         curr = self.grid[x, y]
