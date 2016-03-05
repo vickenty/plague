@@ -114,7 +114,6 @@ class Tileset (object):
         tiles = self.tiles[name]
         if not tiles:
             #raise ValueError, "missing tile '%s'" % (name,)
-            print name
             return self.dummy
         return random.choice(tiles)
 
