@@ -1,2 +1,0 @@
-class Mode (object):
-    pass
