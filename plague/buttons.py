@@ -16,8 +16,9 @@ class ButtonRegistry(object):
         self.pending_button = b
 
     def unset_pending_button(self):
-        self.pending_button.toggle_state()
-        self.pending_button = None
+        if self.pending_button:
+            self.pending_button.toggle_state()
+            self.pending_button = None
 
     def add_button(self, *args):
         b = Button(self.font, *args)
