@@ -37,6 +37,7 @@ class Map(object):
         self.running_census = None
         self.conf = Config(data.load_json(name + ".cfg"))
         self.name = name
+        self.caught_fire = defaultdict(lambda: True)
 
         self.load(name)
 
@@ -110,8 +111,6 @@ class Map(object):
         0xe: "-|r", # 0 1 1 1
         0xf: "-cc", # 1 1 1 1
     }
-
-    caught_fire = defaultdict(lambda: True)
 
     def update(self):
         directions = self.directions[:]
