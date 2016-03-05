@@ -14,13 +14,17 @@ INFO_HEIGHT = INFO_BORDER * 2 + (INFO_BAR_THICKNESS + INFO_BAR_SPACE) * INFO_BAR
 INFO_BAR_MAX_WIDTH = INFO_WIDTH - INFO_BORDER * 2
 
 # TODO Perhaps it should be dynamic and depend on the cell with the highest population
-MAX_VALUE = 100
+MAX_VALUE = 20
+
+INFO_COLOR = (0, 0, 0)
+GOOD_COLOR = (0, 221, 43)
+SICK_COLOR = (55, 121, 143)
+DEAD_COLOR = (255, 21, 13)
 
 class HoverInfo(object):
     def scale(self, val):
         scaled = min(val, MAX_VALUE)
         scaled = scaled * (1.0 * INFO_BAR_MAX_WIDTH / MAX_VALUE)
-        scaled = max(scaled, 1)
         scaled = int(scaled)
         return scaled
 
@@ -39,16 +43,21 @@ class HoverInfo(object):
         else:
             y = y + GRID_H + INFO_OFFSET
 
+        # Avoid showing an empty popup
+        if scaled_good + scaled_sick + scaled_dead == 0:
+            return
+
         background = pygame.Rect(x, y, INFO_WIDTH, INFO_HEIGHT)
-        good = pygame.Rect(x + INFO_BORDER, y + INFO_BORDER + (INFO_BAR_THICKNESS + INFO_BAR_SPACE) * 0, scaled_good, INFO_BAR_THICKNESS)
-        sick = pygame.Rect(x + INFO_BORDER, y + INFO_BORDER + (INFO_BAR_THICKNESS + INFO_BAR_SPACE) * 1, scaled_sick, INFO_BAR_THICKNESS)
-        dead = pygame.Rect(x + INFO_BORDER, y + INFO_BORDER + (INFO_BAR_THICKNESS + INFO_BAR_SPACE) * 2, scaled_dead, INFO_BAR_THICKNESS)
+        pygame.draw.rect(targ, INFO_COLOR, background)
 
-        good_color = (0, 221, 43)
-        sick_color = (55, 121, 143)
-        dead_color = (255, 21, 13)
+        if scaled_good > 0:
+            good = pygame.Rect(x + INFO_BORDER, y + INFO_BORDER + (INFO_BAR_THICKNESS + INFO_BAR_SPACE) * 0, scaled_good, INFO_BAR_THICKNESS)
+            pygame.draw.rect(targ, GOOD_COLOR, good)
 
-        pygame.draw.rect(targ, (0, 0, 0), background)
-        pygame.draw.rect(targ, good_color, good)
-        pygame.draw.rect(targ, sick_color, sick)
-        pygame.draw.rect(targ, dead_color, dead)
+        if scaled_sick > 0:
+            sick = pygame.Rect(x + INFO_BORDER, y + INFO_BORDER + (INFO_BAR_THICKNESS + INFO_BAR_SPACE) * 1, scaled_sick, INFO_BAR_THICKNESS)
+            pygame.draw.rect(targ, SICK_COLOR, sick)
+
+        if scaled_dead > 0:
+            dead = pygame.Rect(x + INFO_BORDER, y + INFO_BORDER + (INFO_BAR_THICKNESS + INFO_BAR_SPACE) * 2, scaled_dead, INFO_BAR_THICKNESS)
+            pygame.draw.rect(targ, DEAD_COLOR, dead)
