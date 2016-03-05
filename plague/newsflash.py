@@ -33,7 +33,7 @@ class Unit (Base):
         "prompt": "Ready to go.",
         "block": "Organise blockade to prevent people from spreading the disease.",
         "reap": "Prevent people from getting sick by disposing of dead bodies.",
-        "burn": "Cleanse the entire city with fire.",
+        "burn": "Purge the entire city with fire.",
     }
 
     def __init__(self, what):

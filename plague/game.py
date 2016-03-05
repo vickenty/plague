@@ -57,7 +57,7 @@ class Game (object):
 
         self.buttons = buttons.ButtonRegistry()
 
-        self.buttons.add_sprite_button("Reap", self.send_reap, 150, 160)
+        self.buttons.add_sprite_button("Cleanse", self.send_reap, 150, 160)
         self.buttons.add_sprite_button("Burn", self.send_burn, 150, 180)
         self.buttons.add_sprite_button("Block", self.send_block, 205, 160)
         self.buttons.add_sprite_button("Cancel", self.cancel_selection, 205, 180)
