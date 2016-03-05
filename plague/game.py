@@ -265,6 +265,7 @@ class Game (object):
                 elif self.frame >= self.win_duration_frames:
                     self.cancel_selection()
                     self.newsflash = newsflash.Victory(census)
+                    self.over = True
 
             for _ in range(0, UPDATES_PER_FRAME):
                 self.update_one()
