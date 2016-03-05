@@ -106,7 +106,7 @@ class Game (object):
         self.hover_info = hover_info.HoverInfo()
 
     def set_pending_cmd(self, cmd):
-        mouse.set_cursor("target")
+        mouse.set_cursor("target", 160)
         self.newsflash = newsflash.Unit(cmd[0])
         self.need_destination = True
         self.pending_cmd = cmd
@@ -202,11 +202,11 @@ class Game (object):
 
         self.renderer.blit(disp)
 
+        self.all_effects.draw(disp)
+
         for unit in self.units:
             unit.update()
             unit.draw(disp, self.selection == unit)
-
-        self.all_effects.draw(disp)
 
         if self.selection:
             self.buttons.draw(disp)
