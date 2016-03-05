@@ -1,4 +1,4 @@
-from random import choice
+from random import choice, random
 import bont
 import data
 
@@ -47,12 +47,22 @@ class Unit (Base):
 class Random (Base):
     name = "ADVISOR"
 
-    news = [
-        "Liege, plague is spreading",
+    stats = [
+        "Dead: {dead}",
+        "Sick: {sick}",
+        "Healthy: {good}",
+    ]
+    bad_news = [
+        "There are dead bodies on the streets"
         "Our country is in danger",
         "People are suffering, my lord",
         "My lord, we need to save our people",
         "LORD BLESS US",
+    ]
+    wtf_news = [
+        "Liege, plague is spreading",
+        "There are reports of a sickness, my lord"
+        "Something suspicious is going on",
     ]
 
     def __init__(self, pop):
@@ -62,7 +72,16 @@ class Random (Base):
         self.text = self.compute_news()
 
     def compute_news(self):
-        return choice(self.news).format(
+        arr = self.stats
+
+        if random() >= 0.5:
+            pop = self.pop
+            if pop.sick > (pop.good + pop.dead)*0.5:
+                arr = self.wtf_news
+            elif pop.dead > (pop.good + pop.sick):
+                arr = self.bad_news
+
+        return choice(arr).format(
             good=int(self.pop.good),
             sick=int(self.pop.sick),
             dead=int(self.pop.dead),
