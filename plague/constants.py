@@ -20,7 +20,7 @@ REAP_FACTOR = 0.01
 # fire
 # proportion of population (healthy, sick, and dead) that's reduced per update
 # when burning
-BURN_FACTOR = 0.5
+BURN_FACTOR = 0.9
 FIRE_SPREAD_CHANCE_PER_FRAME = 0.3
 
 # disease
