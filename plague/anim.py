@@ -4,20 +4,24 @@ from pyg import pygame
 
 
 class Anim (pygame.sprite.Sprite):
-    def __init__(self, name, pos_x, pos_y):
-        conf = data.load_json(name)
+    def __init__(self, name, seq, pos_x, pos_y):
+        self.conf = conf = data.load_json(name)
+
         self.sheet = data.load_image(conf["image"])
         self.frame_w, self.frame_h = conf["frame"]
         self.offset_x, self.offset_y = conf["offset"]
-        self.frames = itertools.cycle(conf["frames"])
         self.rect = pygame.Rect(
             pos_x + self.offset_x,
             pos_y + self.offset_y,
             self.frame_w,
             self.frame_h,
         )
-
+        
+        self.set_seq(seq)
         self.update()
+
+    def set_seq(self, seq):
+        self.frames = itertools.cycle(self.conf["frames"][seq])
 
     def update(self):
         fx, fy = next(self.frames)
