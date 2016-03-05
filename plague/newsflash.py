@@ -88,6 +88,7 @@ class Random (Base):
             cure=int(self.time_to_cure),
         )
 
+
 class LevelMessage (Base):
     name = "TUTORIAL"
 
@@ -104,11 +105,21 @@ class LevelMessage (Base):
         if self.finished:
             self.finished_cb()
 
-class Victory(Random):
+
+class Victory(Base):
+    name = "ADVISOR"
+    def __init__(self, pop):
+        super(Victory, self).__init__()
+        print self.font
+        self.face = data.load_image("faces/6p.png")
+        self.pop = pop
+        self.text = self.compute_news()
+
     def compute_news(self):
         return "You managed to save %d people!" % self.pop.good
 
 
-class Loss(Random):
+class Loss(Victory):
+    name = "ADVISOR"
     def compute_news(self):
         return "Our country is doomed!"
