@@ -98,7 +98,11 @@ class Game (object):
         self.renderer.draw(self.model)
 
         self.clock = pygame.time.Clock()
-        self.win_time = self.model.conf.time * FRAMES_PER_SECOND
+
+        # Win conditions
+        self.win_duration_sec    = self.model.conf.game["duration"]
+        self.win_duration_frames = self.model.conf.game["duration"] * FRAMES_PER_SECOND
+        self.win_good_threshold  = self.model.conf.game["good_threshold"]
 
         self.font = bont.Tiny()
         self.news_font = data.load_font(*NEWS_FONT)
@@ -233,9 +237,10 @@ class Game (object):
             self.play_level_message()
 
             if census is not None:
-                if census.good < 1.0:  # and census.sick < 1.0:
+                # Determine the game outcome: win or defeat
+                if census.good < self.win_good_threshold:  # and census.sick < 1.0:
                     self.over = False
-                elif self.frame >= self.win_time:
+                elif self.frame >= self.win_duration_frames:
                     self.over = True
 
             for _ in range(0, UPDATES_PER_FRAME):
@@ -291,8 +296,7 @@ class Game (object):
 
         if self.frame >= self.next_newsflash and pop is not None:
             curr_time = self.frame / FRAMES_PER_SECOND
-            human_win_time = self.model.conf.time
-            self.newsflash = newsflash.Random(curr_time, pop, human_win_time)
+            self.newsflash = newsflash.Random(curr_time, pop, self.win_duration_sec)
             self.next_newsflash = self.frame + random.randint(5 * FRAMES_PER_SECOND, 10 * FRAMES_PER_SECOND)
 
     def draw_cell_hover(self, targ):
