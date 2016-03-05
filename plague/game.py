@@ -28,6 +28,22 @@ class Game (object):
     cell_highlight_image = pygame.Surface((GRID_W, GRID_H), pygame.SRCALPHA);
     cell_highlight_image.fill((0xff, 0xff, 0xff, 0x33), (0, 0, GRID_W, GRID_H))
 
+    select_voices = [
+        "voices/sel1.wav",
+        "voices/sel2.wav",
+        "voices/sel3.wav",
+        "voices/sel4.wav",
+        "voices/sel5.wav",
+        "voices/sel6.wav",
+    ]
+
+    ack_voices = [
+        "voices/ack1.wav",
+        "voices/ack2.wav",
+        "voices/ack3.wav",
+        "voices/ack4.wav",
+    ]
+
     def __init__(self, m):
         self.model = m
 
@@ -51,6 +67,7 @@ class Game (object):
         self.news_font = data.load_font(*NEWS_FONT)
         self.over_font = data.load_font(*OVER_FONT)
         self.selection = None
+        self.last_selection = None
         self.need_destination = False
         self.pending_cmd = None
 
@@ -74,6 +91,9 @@ class Game (object):
         self.paused = False
         self.final_click = False
 
+        self.voice_chan = None
+        self.select_voice_iter = iter(self.select_voices)
+
         music.enqueue("minor1")
 
     def set_pending_cmd(self, cmd):
@@ -93,6 +113,7 @@ class Game (object):
         x, y = dst
         self.unblock_cell()
         self.selection.set_command("move", x, y, self.pending_cmd)
+        data.load_sample(random.choice(self.ack_voices)).play()
         self.unset_pending_cmd()
         self.selection = None
 
@@ -167,7 +188,15 @@ class Game (object):
         self.selection = self.find_unit(pos)
 
         if self.selection:
+            if not self.voice_chan or not self.voice_chan.get_busy():
+                if self.selection != self.last_selection:
+                    self.select_voice_iter = iter(self.select_voices)
+                self.voice_chan = data.load_sample(next(self.select_voice_iter)).play()
+                self.last_selection = self.selection
+
             self.newsflash = newsflash.Unit("prompt")
+        else:
+            self.last_selection = None
 
     def update_one(self):
         dx, dy, new_dead, new_sick, caught_fire = self.model.update()
