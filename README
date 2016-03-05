@@ -1,3 +1,24 @@
+Life, a game of
+---------------
+
+Face the outbreak of a unknown disease and save your kingdom from a terrible
+fate.
+
+Requirements
+------------
+python 2.7  (does not work on python 3)
+pygame 1.8+ (works with pygame_sdl2)
+
+Credits
+-------
+Alexey Surikov
+Ben Tyler
+Bruno Czekay
+Maxim Vuets
+Vickenty Fesunov
+
+Additional resources by:
+
 data/dejavu-sans.ttf see data/dejavu-sans.txt for copyright information.
 
 data/tileset.png is based based on work of ThKaspar, http://opengameart.org/content/micro-tileset-overworld-and-dungeon
