@@ -9,11 +9,6 @@ from collections import defaultdict
 import data
 from constants import *
 
-# proportion of population (healthy, sick, and dead) that's reduced per update
-# when burning
-BURN_FACTOR = 0.5
-
-
 class Config (object):
     def __init__(self, data):
         self.messages = []
@@ -136,7 +131,7 @@ class Map(object):
 
                 if curr.burning:
                     # FIXME better conditions for catching fire
-                    if random.random() < 0.3:
+                    if random.random() < FIRE_SPREAD_CHANCE_PER_FRAME:
                         n.catch_fire()
 
                 if n.is_blocked:
@@ -251,11 +246,11 @@ class Cell(object):
         if pop.good == 0.0:
             return
 
-        ratio = (pop.sick + pop.dead) / pop.good / 10
+        ratio = (INFECTION_COEFF_SICK * pop.sick + INFECTION_COEFF_DEAD * pop.dead) / pop.good / INFECTION_SCALE_FACTOR
         if ratio == 0.0:
             return
 
-        pop.infect(min(0.1, ratio))
+        pop.infect(min(MAX_INFECT_RATIO_PER_FRAME, ratio))
 
         self.burn(BURN_FACTOR)
 
