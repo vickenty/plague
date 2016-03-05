@@ -41,7 +41,8 @@ class Game (object):
         # Win conditions
         self.win_duration_sec    = self.model.conf.game["duration"]
         self.win_duration_frames = self.model.conf.game["duration"] * FRAMES_PER_SECOND
-        self.win_good_threshold  = self.model.conf.game["good_threshold"]
+        self.win_good_min_threshold  = self.model.conf.game["good_min_threshold"]
+        self.win_sick_max_threshold  = self.model.conf.game["sick_max_threshold"]
 
         self.font = bont.Tiny()
         self.news_font = data.load_font(*NEWS_FONT)
@@ -134,9 +135,9 @@ class Game (object):
         pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
         if self.paused:
             # unpause and finish newsflash
-            self.paused = False
             if self.newsflash is not None:
-                self.newsflash.show = 0
+                self.newsflash.show = 1
+            self.paused = False
             return
 
         if self.selection:
@@ -180,11 +181,14 @@ class Game (object):
 
         census = self.model.census
         if self.over is None and not self.paused:
-            self.play_level_message()
+            # let the doc warp to the starting location
+            if self.frame > 1:
+                if len(self.model.conf.messages) > 0:
+                    self.play_level_message()
 
             if census is not None:
                 # Determine the game outcome: win or defeat
-                if census.good < self.win_good_threshold:  # and census.sick < 1.0:
+                if census.good < self.win_good_min_threshold or census.sick > self.win_sick_max_threshold:
                     self.over = False
                 elif self.frame >= self.win_duration_frames:
                     self.over = True
@@ -208,7 +212,7 @@ class Game (object):
         for unit in self.units:
             if not self.paused:
                 unit.update()
-            unit.draw(disp, self.selection == unit)
+            unit.draw(disp, self.selection == unit, self.paused)
 
         if self.selection:
             self.buttons.draw(disp)
@@ -275,21 +279,15 @@ class Game (object):
 
     def play_level_message(self):
         game_time = self.frame / FRAMES_PER_SECOND
-        level_messages = self.model.conf.messages
-        if game_time in level_messages:
-            message = level_messages[game_time]
-            del level_messages[game_time]
-            if self.newsflash is None:
-                if self.selection:
-                    self.cancel_selection()
+        if not self.newsflash:
+            message = self.model.conf.messages[0]
+            if game_time > int(message["min_time"]):
+                self.model.conf.messages.pop(0)
                 self.paused = True
                 def finished_cb():
                     self.paused = False
 
-                self.newsflash = newsflash.LevelMessage(message, finished_cb)
-            else:
-                # push the message off into the future
-                level_messages[game_time + 1] = message
+                self.newsflash = newsflash.LevelMessage(message["msg"], finished_cb)
 
     def compute_next_level(self):
         if not self.auto_progress:

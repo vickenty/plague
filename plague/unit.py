@@ -80,17 +80,18 @@ class Unit (object):
         self.anim.set_pos(self.rect.topleft)
         self.anim.update()
 
-    def draw(self, targ, selected):
+    def draw(self, targ, selected, paused = False):
         cmd, _ = self.command
-        if cmd == self.cmd_block:
-            self.anim.set_seq("block")
-        elif cmd == self.cmd_move:
-            if abs(self.move_dx) > abs(self.move_dy):
-                self.anim.set_seq("r" if self.move_dx > 0 else "l")
+        if not paused:
+            if cmd == self.cmd_block:
+                self.anim.set_seq("block")
+            elif cmd == self.cmd_move:
+                if abs(self.move_dx) > abs(self.move_dy):
+                    self.anim.set_seq("r" if self.move_dx > 0 else "l")
+                else:
+                    self.anim.set_seq("d" if self.move_dy > 0 else "u")
             else:
-                self.anim.set_seq("d" if self.move_dy > 0 else "u")
-        else:
-            self.anim.set_seq(self.idle_seq)
+                self.anim.set_seq(self.idle_seq)
 
         self.anim.set_pos(self.rect.topleft)
         self.anim.draw(targ)

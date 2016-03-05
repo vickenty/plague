@@ -16,14 +16,8 @@ BURN_FACTOR = 0.5
 
 class Config (object):
     def __init__(self, data):
-        self.messages = {}
+        self.messages = []
         if "messages" in data:
-            # int object keys not allowed in JSON, but these are times
-            for key in data["messages"]:
-                val = data["messages"][key]
-                del data["messages"][key]
-                data["messages"][int(key)] = val
-
             self.messages = data["messages"]
 
         self.game = data["game"]
