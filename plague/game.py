@@ -188,6 +188,8 @@ class Game (object):
     def handle_click(self, ev):
         mx, my = ev.pos
         pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
+        if self.paused:
+            return
 
         if self.selection:
             if self.buttons.process_click(pos):
