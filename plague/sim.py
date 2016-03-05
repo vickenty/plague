@@ -104,7 +104,8 @@ class Map(object):
     caught_fire = defaultdict(lambda: True)
 
     def update(self):
-        random.shuffle(self.directions)
+        directions = self.directions[:]
+        random.shuffle(directions)
         moving = Population(0.0)
         x, y = next(self.order_iter)
         curr = self.grid[x, y]
@@ -119,7 +120,7 @@ class Map(object):
         tpop = cpop.good + cpop.sick + cpop.dead
 
         if tpop > 0:
-            for dx, dy in self.directions:
+            for dx, dy in directions:
                 nx, ny = x + dx, y + dy
                 if nx < 0 or nx >= self.width or ny < 0 or ny >= self.height:
                     continue
