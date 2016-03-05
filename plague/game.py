@@ -259,11 +259,12 @@ class Game (object):
             if census is not None:
                 # Determine the game outcome: win or defeat
                 if (census.good + census.sick) < self.win_living_min_threshold:
+                    self.cancel_selection()
                     self.newsflash = newsflash.Loss(self.win_living_min_threshold, census)
                     self.over = False
                 elif self.frame >= self.win_duration_frames:
+                    self.cancel_selection()
                     self.newsflash = newsflash.Victory(census)
-                    self.over = True
 
             for _ in range(0, UPDATES_PER_FRAME):
                 self.update_one()
@@ -274,6 +275,13 @@ class Game (object):
         self.draw_stats(disp)
 
         self.draw_newsflash(disp, census)
+
+        for unit in self.units:
+            if not self.paused:
+                unit.update()
+            if unit.command[0] == unit.cmd_reap and random.random() > 0.96:
+                effects.Plus(unit.x * GRID_W, unit.y * GRID_H, self.all_effects, self.individual_effects[unit.x, unit.y])
+            unit.draw(disp, self.selection == unit, self.paused)
 
         if self.over is not None:
             if self.over:
@@ -289,13 +297,6 @@ class Game (object):
                 music.switch("diminished")
                 self.draw_game_over(disp, "GAME OVER", BACK_TO_MENU)
                 return self if not self.final_click else title.Title()
-
-        for unit in self.units:
-            if not self.paused:
-                unit.update()
-            if unit.command[0] == unit.cmd_reap and random.random() > 0.96:
-                effects.Plus(unit.x * GRID_W, unit.y * GRID_H, self.all_effects, self.individual_effects[unit.x, unit.y])
-            unit.draw(disp, self.selection == unit, self.paused)
 
         if self.selection:
             self.buttons.draw(disp)
