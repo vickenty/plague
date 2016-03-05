@@ -70,8 +70,8 @@ class Walker (anim.Anim):
 
 class Infection(anim.Anim):
     def __init__(self, x, y, *groups):
-        self.ttl = 4
-        anim.Anim.__init__(self, "flame-8.cfg", "flame", x, y, *groups)
+        self.ttl = 8
+        anim.Anim.__init__(self, "miasma.cfg", "miasma", x, y, *groups)
 
     def update(self):
         anim.Anim.update(self)
