@@ -209,6 +209,8 @@ class Cell(object):
         self.burning = False
         self.burnt = False
 
+        self.reap_infection_factor = 1.0
+
     def block(self):
         self.is_blocked = True
 
@@ -259,10 +261,13 @@ class Cell(object):
         else:
             self.new_sick = 0
 
+        reap_mod = self.reap_infection_factor
+        self.reap_infection_factor = 1.0
+
         if pop.good == 0.0:
             return
 
-        ratio = (INFECTION_COEFF_SICK * pop.sick + INFECTION_COEFF_DEAD * pop.dead) / pop.good / INFECTION_SCALE_FACTOR
+        ratio = (INFECTION_COEFF_SICK * pop.sick + INFECTION_COEFF_DEAD * pop.dead) / pop.good / INFECTION_SCALE_FACTOR * reap_mod
         if ratio == 0.0:
             return
 

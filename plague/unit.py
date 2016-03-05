@@ -47,15 +47,29 @@ class Unit (object):
         self.x += dx
         self.y += dy
 
+    reap_directions = [
+        (-1,  0),
+        (-1, -1),
+        ( 0, -1),
+        ( 1, -1),
+        ( 1,  0),
+        ( 1,  1),
+        ( 0,  1),
+        (-1,  1),
+    ]
+
     def cmd_reap(self, grid):
         model = self.model
         grid = model.grid
         grid[self.x, self.y].pop.reap(REAP_FACTOR)
-        for dx, dy in model.directions:
+        grid[self.x, self.y].reap_infection_factor = REAP_FACTOR
+
+        for dx, dy in self.reap_directions:
             nx, ny = self.x + dx, self.y + dy
             if not (0 <= nx < model.width and 0 <= ny < model.height):
                 continue
             grid[nx, ny].pop.reap(REAP_FACTOR)
+            grid[nx, ny].reap_infection_factor = REAP_FACTOR
 
     def cmd_burn(self, grid):
         grid[self.x, self.y].catch_fire()
