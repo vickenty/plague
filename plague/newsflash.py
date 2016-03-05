@@ -124,6 +124,10 @@ class Victory(Base):
         self.pop = pop
         self.text = self.compute_news()
 
+    def advance(self):
+        # stays forever
+        pass
+
     def compute_news(self):
         return "You managed to save %d people!" % self.pop.good
 

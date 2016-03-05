@@ -259,8 +259,10 @@ class Game (object):
             if census is not None:
                 # Determine the game outcome: win or defeat
                 if (census.good + census.sick) < self.win_living_min_threshold:
+                    self.newsflash = newsflash.Loss(self.win_living_min_threshold, census)
                     self.over = False
                 elif self.frame >= self.win_duration_frames:
+                    self.newsflash = newsflash.Victory(census)
                     self.over = True
 
             for _ in range(0, UPDATES_PER_FRAME):
@@ -272,12 +274,13 @@ class Game (object):
         if self.over is None:
             self.draw_stats(disp)
 
+        self.draw_newsflash(disp, census)
+
         if self.over is not None:
             if self.over:
                 music.switch("major")
                 self.draw_game_over(disp, "SUCCESS", TO_NEXT_LEVEL if self.model.conf.next_level else BACK_TO_MENU)
                     
-                self.newsflash = newsflash.Victory(census).draw(disp)
                 if self.final_click:
                     n = self.model.next_level()
                     if n is not None:
@@ -286,7 +289,6 @@ class Game (object):
             else:
                 music.switch("diminished")
                 self.draw_game_over(disp, "GAME OVER", BACK_TO_MENU)
-                self.newsflash = newsflash.Loss(self.win_living_min_threshold, census).draw(disp)
                 return self if not self.final_click else title.Title()
 
         for unit in self.units:
@@ -300,8 +302,6 @@ class Game (object):
             self.buttons.draw(disp)
 
         self.draw_cell_hover(disp)
-
-        self.draw_newsflash(disp, census)
 
         return self
 
