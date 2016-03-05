@@ -21,6 +21,10 @@ class Config (object):
         self.units = data["units"]
         del data["units"]
 
+        self.next_level = data.get("next")
+        if self.next_level is not None:
+            del data["next"]
+
         self.cell = data
 
 
@@ -39,6 +43,12 @@ class Map(object):
     def make_cell(self, char):
         cell_conf = self.conf.cell[char]
         return Cell(**cell_conf)
+
+    def next_level(self):
+        n = self.conf.next_level
+        if n is not None:
+            return Map(n)
+        return None
 
     def load(self, name):
         with data.open(name + ".map") as src:
@@ -145,6 +155,8 @@ class Map(object):
                 curr.pop -= moving
                 n.incoming += moving
 
+                n.incoming_acu[dx, dy] += moving.alive
+
         self.running_census += curr.pop
 
         caught_fire = curr.burning and self.caught_fire[x, y]
@@ -173,7 +185,12 @@ class Cell(object):
         self.is_blocked = False
         self.pop = Population(good, sick, dead)
         self.incoming = Population(0.0)
-        self.last_incoming = Population(0.0)
+        self.incoming_acu = {
+            Map.directions[0]: 0.0,
+            Map.directions[1]: 0.0,
+            Map.directions[2]: 0.0,
+            Map.directions[3]: 0.0,
+        }
         self.has_walls = has_walls
         self.gates = gates
         self.walls = {}
@@ -223,7 +240,6 @@ class Cell(object):
         pop = self.pop
 
         pop += self.incoming
-        self.last_incoming = self.incoming
         self.incoming = Population(0.0)
 
         pop.kill(0.02)

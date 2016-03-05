@@ -20,7 +20,7 @@ REAP_FACTOR = 0.01
 # fire
 # proportion of population (healthy, sick, and dead) that's reduced per update
 # when burning
-BURN_FACTOR = 0.5
+BURN_FACTOR = 0.9
 FIRE_SPREAD_CHANCE_PER_FRAME = 0.3
 
 # disease
@@ -30,3 +30,6 @@ MAX_INFECT_RATIO_PER_FRAME = 0.1
 INFECTION_COEFF_SICK = 0.5
 INFECTION_COEFF_DEAD = 1
 INFECTION_SCALE_FACTOR = 50
+
+POP_FLOW_ALIVE_NR_TRIGGER = 50
+POP_FLOW_PROBABILiTY_TRIGGER = 0.2

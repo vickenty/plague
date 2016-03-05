@@ -25,11 +25,8 @@ class Game (object):
     cell_highlight_image = pygame.Surface((GRID_W, GRID_H), pygame.SRCALPHA);
     cell_highlight_image.fill((0xff, 0xff, 0xff, 0x33), (0, 0, GRID_W, GRID_H))
 
-    def __init__(self, m, auto_progress=False, max_level=None):
+    def __init__(self, m):
         self.model = m
-
-        self.auto_progress = auto_progress
-        self.max_level = max_level
 
         self.units = [unit.Unit(self.model, x, y) for x, y in self.model.conf.units]
 
@@ -73,6 +70,7 @@ class Game (object):
 
         self.over = None
         self.paused = False
+        self.final_click = False
 
         music.enqueue("minor1")
 
@@ -140,6 +138,10 @@ class Game (object):
     def handle_click(self, ev):
         mx, my = ev.pos
         pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
+
+        if self.over is not None:
+            self.final_click = True
+
         if self.paused:
             # unpause and finish newsflash
             if self.newsflash is not None:
@@ -176,10 +178,15 @@ class Game (object):
         if caught_fire:
             effects.Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
 
-        if cell.last_incoming.alive > 5 and random.random() > 0.9:
-            dirx, diry = random.choice(self.model.directions)
-            nx, ny = dx + dirx, dy + diry
-            effects.Walker(dx * GRID_W, dy * GRID_H, dirx, diry, self.all_effects, self.individual_effects[dx, dy])
+        flow_dir = max(cell.incoming_acu.keys(), key=lambda d: cell.incoming_acu[d])
+        if cell.incoming_acu[flow_dir] >= POP_FLOW_ALIVE_NR_TRIGGER:
+            dirx, diry = flow_dir
+            # Shift animation to the cell-origin of the flow
+            dx, dy = dx - dirx, dy - diry
+            # Do not fire up more than one animation effect at the same time
+            if len(self.individual_effects[dx, dy]) == 0 and random.random() <= POP_FLOW_PROBABILiTY_TRIGGER:
+                effects.Walker(dx * GRID_W, dy * GRID_H, dirx, diry, self.all_effects, self.individual_effects[dx, dy])
+            cell.incoming_acu[flow_dir] = 0.0
 
     def update(self, disp):
         census = self.model.census
@@ -187,11 +194,10 @@ class Game (object):
         if census is None:
             music.update(1.0)
         elif census.alive > 1.0:
-            print census.good / census.alive
             music.update(1 - min(1, max(0, census.good / census.alive)))
         else:
             music.update(0.0)
-        
+
         if not self.paused:
             self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
@@ -218,12 +224,13 @@ class Game (object):
         if self.over is not None:
             if self.over:
                 self.draw_game_over(disp, "SUCCESS")
-                if self.auto_progress:
-                    n = self.compute_next_level()
-                    if n is not None:
-                        return n
                 newsflash.Victory(census).draw(disp)
-                return self
+                self.paused = True
+                if self.final_click:
+                    n = self.model.next_level()
+                    if n is not None:
+                        return Game(n)
+                    return self
             else:
                 self.draw_game_over(disp, "FAIL")
                 newsflash.Loss(census).draw(disp)
@@ -308,18 +315,3 @@ class Game (object):
                     self.paused = False
 
                 self.newsflash = newsflash.LevelMessage(message["face"], message["name"], message["msg"], finished_cb)
-
-    def compute_next_level(self):
-        if not self.auto_progress:
-            return None
-
-        m = re.search("(\d+)$", self.model.name)
-        if m is None or self.max_level <= int(m.group(0))+1:
-            return None
-
-        n = re.sub(
-            "(\d+)$",
-            lambda x: str(int(x.group(0))+1),
-            self.model.name,
-        )
-        return Game(sim.Map(n))
