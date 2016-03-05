@@ -201,7 +201,7 @@ class Game (object):
         else:
             music.update(0.0)
 
-        if not self.paused:
+        if not self.paused and not self.over:
             self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
 
@@ -223,6 +223,8 @@ class Game (object):
 
         self.renderer.blit(disp)
         self.all_effects.draw(disp)
+
+        self.draw_stats(disp)
 
         if self.over is not None:
             if self.over:
@@ -248,8 +250,6 @@ class Game (object):
 
         if self.selection:
             self.buttons.draw(disp)
-
-        self.draw_stats(disp)
 
         self.draw_cell_hover(disp)
 
