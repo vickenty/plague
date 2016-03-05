@@ -228,7 +228,8 @@ class Game (object):
 
         self.draw_cell_hover(disp)
 
-        self.draw_newsflash(disp, self.model.census)
+        if census is not None:
+            self.draw_newsflash(disp, census)
 
         return self
 
@@ -255,7 +256,7 @@ class Game (object):
 
         if self.frame >= self.next_newsflash:
             self.newsflash = newsflash.Random(pop)
-            self.next_newsflash = self.frame + random.randint(30 * FRAMES_PER_SECOND, 60 * FRAMES_PER_SECOND)
+            self.next_newsflash = self.frame + random.randint(15 * FRAMES_PER_SECOND, 40 * FRAMES_PER_SECOND)
 
     def draw_cell_hover(self, targ):
         (mx, my) = pygame.mouse.get_pos()

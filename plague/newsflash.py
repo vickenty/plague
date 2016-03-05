@@ -62,7 +62,11 @@ class Random (Base):
         self.text = self.compute_news()
 
     def compute_news(self):
-        return choice(self.news)
+        return choice(self.news).format(
+            good=int(self.pop.good),
+            sick=int(self.pop.sick),
+            dead=int(self.pop.dead),
+        )
 
 
 class Victory(Random):
