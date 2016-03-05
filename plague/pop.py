@@ -67,6 +67,10 @@ class Population (object):
         self.dead -= self.dead * factor
 
     @property
+    def not_good(self):
+        return self.sick + self.dead + self.burnt + self.done
+
+    @property
     def alive(self):
         return self.good + self.sick
 

@@ -191,18 +191,34 @@ class Game (object):
                 effects.Walker(dx * GRID_W, dy * GRID_H, dirx, diry, self.all_effects, self.individual_effects[dx, dy])
             cell.incoming_acu[flow_dir] = 0.0
 
-    def update(self, disp):
+    def update_music(self):
         census = self.model.census
 
         if census is None:
             music.update(1.0)
-        elif census.alive > 1.0:
+            return
+
+        if census.alive > 1.0:
             music.update(1 - min(1, max(0, census.good / census.alive)))
         else:
             music.update(0.0)
 
+        not_good = census.not_good
+
+        if census.good > not_good * 3:
+            music.enqueue("minor1")
+        elif census.good > census.sick * 2:
+            music.enqueue("minor2")
+        else:
+            music.enqueue("diminished")
+
+    def update(self, disp):
+        census = self.model.census
+        self.update_music()
+
         if not self.paused and not self.over:
             self.frame += 1
+
         self.clock.tick(FRAMES_PER_SECOND)
 
         if self.over is None and not self.paused:
@@ -228,6 +244,7 @@ class Game (object):
 
         if self.over is not None:
             if self.over:
+                music.switch("major")
                 self.draw_game_over(disp, "SUCCESS", TO_NEXT_LEVEL if self.model.conf.next_level else BACK_TO_MENU)
                     
                 self.newsflash = newsflash.Victory(census).draw(disp)
@@ -237,6 +254,7 @@ class Game (object):
                         return Game(n)
                     return title.Title()
             else:
+                music.switch("diminished")
                 self.draw_game_over(disp, "GAME OVER", BACK_TO_MENU)
                 self.newsflash = newsflash.Loss(self.win_living_min_threshold, census).draw(disp)
                 return self if not self.final_click else title.Title()
