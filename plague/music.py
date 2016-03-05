@@ -54,22 +54,22 @@ class Music (object):
     UPD_TICKS = BAR_TICKS * UPD_BARS
 
     channels = [
-        Channel("melody_dim", "music/melody_dim_32bar.ogg"),
-        Channel("melody_major", "music/melody_major_32bar.ogg"),
-        Channel("melody_minor1", "music/melody_minor_32bar.ogg"),
-        Channel("melody_minor2", "music/melody_minor_second_32bar.ogg"),
-        #Channel("perc_cymbal", "music/perc_cymbal_1bar.ogg"),
-        #Channel("perc_gong", "music/perc_gong_1bar.ogg"),
-        Channel("perc_snare", "music/perc_snare_4bar.ogg"),
-        #Channel("perc_triangle", "music/perc_triangle_4bar.ogg"),
-        Channel("pizzicato", "music/pizzicato_8bar.ogg"),
-        Channel("pizzicato_dim", "music/pizzicato_dim_8bar.ogg"),
-        Channel("strings_low", "music/strings_low_8bar.ogg"),
-        Channel("strings_mid_dim", "music/strings_mid_dim_32bar.ogg"),
-        Channel("strings_mid_major", "music/strings_mid_major_32bar.ogg"),
-        Channel("strings_mid_minor1", "music/strings_mid_minor_32bar.ogg"),
-        Channel("strings_mid_minor2", "music/strings_mid_minor_second_32bar.ogg"),
-        Channel("timpani", "music/timpani_8bar.ogg"),
+        Channel("melody_dim", "music/melody_dim_32bar.wav"),
+        Channel("melody_major", "music/melody_major_32bar.wav"),
+        Channel("melody_minor1", "music/melody_minor_32bar.wav"),
+        Channel("melody_minor2", "music/melody_minor_second_32bar.wav"),
+        #Channel("perc_cymbal", "music/perc_cymbal_1bar.wav"),
+        #Channel("perc_gong", "music/perc_gong_1bar.wav"),
+        Channel("perc_snare", "music/perc_snare_4bar.wav"),
+        #Channel("perc_triangle", "music/perc_triangle_4bar.wav"),
+        Channel("pizzicato", "music/pizzicato_8bar.wav"),
+        Channel("pizzicato_dim", "music/pizzicato_dim_8bar.wav"),
+        Channel("strings_low", "music/strings_low_8bar.wav"),
+        Channel("strings_mid_dim", "music/strings_mid_dim_32bar.wav"),
+        Channel("strings_mid_major", "music/strings_mid_major_32bar.wav"),
+        Channel("strings_mid_minor1", "music/strings_mid_minor_32bar.wav"),
+        Channel("strings_mid_minor2", "music/strings_mid_minor_second_32bar.wav"),
+        Channel("timpani", "music/timpani_8bar.wav"),
     ]
 
     presets = {
