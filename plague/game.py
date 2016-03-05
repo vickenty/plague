@@ -96,6 +96,7 @@ class Game (object):
 
         self.frame = 0
         self.newsflash = None
+        self.next_newsflash = 0
 
         self.hover_info = hover_info.HoverInfo()
 
@@ -252,9 +253,9 @@ class Game (object):
                 self.newsflash = None
             return
 
-        # TODO compute random cool off time
-        if random.random() > 0.8:
+        if self.frame >= self.next_newsflash:
             self.newsflash = newsflash.Random(pop)
+            self.next_newsflash = self.frame + random.randint(30 * FRAMES_PER_SECOND, 60 * FRAMES_PER_SECOND)
 
     def draw_cell_hover(self, targ):
         (mx, my) = pygame.mouse.get_pos()
