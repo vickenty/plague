@@ -105,6 +105,8 @@ class Game (object):
 
         self.hover_info = hover_info.HoverInfo()
 
+        self.over = None
+
     def set_pending_cmd(self, cmd):
         mouse.set_cursor("target", 160)
         self.newsflash = newsflash.Unit(cmd[0])
@@ -192,14 +194,14 @@ class Game (object):
         self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
 
-        won = None
         census = self.model.census
-        if census is not None and census.good < 1.0 and census.sick < 1.0:
-            won = False
-        elif self.frame >= self.win_time:
-            won = True
+        if self.over is None:
+            if census is not None:
+                if census.good < 1.0:  # and census.sick < 1.0:
+                    self.over = False
+                elif self.frame >= self.win_time:
+                    self.over = True
 
-        if won is None:
             for _ in range(0, UPDATES_PER_FRAME):
                 dx, dy, new_dead, caught_fire = self.model.update()
                 self.individual_effects[dx, dy].update()
@@ -212,8 +214,8 @@ class Game (object):
 
         self.all_effects.draw(disp)
 
-        if won is not None:
-            if won:
+        if self.over is not None:
+            if self.over:
                 newsflash.Victory(census).draw(disp)
                 return self
             else:
