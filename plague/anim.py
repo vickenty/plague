@@ -1,24 +1,27 @@
+import itertools
 import data
 from pyg import pygame
 
+
 class Anim (pygame.sprite.Sprite):
-    def __init__(self, name, frame_w, dx=0, dy=0):
-        self.orig = data.load_image(name)
-        self.frame_w = frame_w
-        self.frame_h = self.orig.get_height()
-        self.frame = 0
-        self.total = self.orig.get_width() // frame_w
-        self.dx = dx
-        self.dy = dy
-        self.rect = pygame.Rect(dx, dy, self.frame_w, self.frame_h)
+    def __init__(self, name, pos_x, pos_y):
+        conf = data.load_json(name)
+        self.sheet = data.load_image(conf["image"])
+        self.frame_w, self.frame_h = conf["frame"]
+        self.offset_x, self.offset_y = conf["offset"]
+        self.frames = itertools.cycle(conf["frames"])
+        self.rect = pygame.Rect(
+            pos_x + self.offset_x,
+            pos_y + self.offset_y,
+            self.frame_w,
+            self.frame_h,
+        )
 
         self.update()
 
     def update(self):
-        self.image = self.orig.subsurface(
-            (int(self.frame) * self.frame_w, 0, self.frame_w, self.frame_h)
-        )
-        self.frame = (self.frame + 1) % self.total
+        fx, fy = next(self.frames)
+        self.image = self.sheet.subsurface((fx, fy, self.frame_w, self.frame_h))
 
 if __name__ == '__main__':
     from pyg import pygame

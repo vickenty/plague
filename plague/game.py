@@ -55,7 +55,7 @@ class Ghost (pygame.sprite.Sprite):
 
 class Fire(anim.Anim):
     def __init__(self, x, y, *groups):
-        anim.Anim.__init__(self, "flame-8.png", 16, x-4, y-3)
+        anim.Anim.__init__(self, "flame-8.cfg", x, y)
         pygame.sprite.Sprite.__init__(self, *groups)
 
 
