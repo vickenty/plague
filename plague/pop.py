@@ -2,22 +2,25 @@
 
 
 class Population (object):
-    def __init__(self, good, sick=0.0, dead=0.0):
+    def __init__(self, good, sick=0.0, dead=0.0, done=0.0):
         self.good = good
         self.sick = sick
         self.dead = dead
+        self.done = done
 
     def __add__(self, other):
         return Population(
             self.good + other.good,
             self.sick + other.sick,
             self.dead + other.dead,
+            self.done + other.done,
         )
 
     def __iadd__(self, other):
         self.good += other.good
         self.sick += other.sick
         self.dead += other.dead
+        self.done += other.done
         return self
 
     def __sub__(self, other):
@@ -25,12 +28,14 @@ class Population (object):
             self.good - other.good,
             self.sick - other.sick,
             self.dead - other.dead,
+            self.done - other.done,
         )
 
     def __isub__(self, other):
         self.good -= other.good
         self.sick -= other.sick
         self.dead -= other.dead
+        self.done -= other.done
         return self
 
     def infect(self, factor):
@@ -46,8 +51,12 @@ class Population (object):
     def reap(self, factor):
         reaped = self.dead * factor
         self.dead -= reaped
+        self.done += reaped
 
     def burn(self, factor):
+        self.done += self.good * factor
+        self.done += self.sick * factor
+        self.done += self.dead * factor
         self.good -= self.good * factor
         self.sick -= self.sick * factor
         self.dead -= self.dead * factor
