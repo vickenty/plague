@@ -65,11 +65,11 @@ class Random (Base):
         "Something suspicious is going on",
     ]
 
-    def __init__(self, curr_time, pop, human_win_time):
+    def __init__(self, pop, time_to_cure):
         super(Random, self).__init__()
         self.face = data.load_image("faces/6p.png")
         self.pop = pop
-        self.time_to_cure = human_win_time - curr_time
+        self.time_to_cure = time_to_cure
         self.text = self.compute_news()
 
     def compute_news(self):
@@ -124,5 +124,10 @@ class Victory(Base):
 class Loss(Victory):
     name = "GAME OVER"
 
+    def __init__(self, minimum_good, pop):
+        self.minimum_good = minimum_good
+        super(Loss, self).__init__(pop)
+
     def compute_news(self):
-        return "Our country is doomed!"
+        total = self.pop.done + self.pop.burnt + self.pop.dead + self.pop.sick + self.pop.good
+        return "Our country is doomed! Of %d souls, %d perished in the plague, %d are ill, and %d died in a fire!" % (total, self.pop.dead, self.pop.sick, self.pop.burnt)

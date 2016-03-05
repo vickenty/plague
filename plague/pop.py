@@ -14,6 +14,7 @@ class Population (object):
             self.good + other.good,
             self.sick + other.sick,
             self.dead + other.dead,
+            self.burnt + other.burnt,
             self.done + other.done,
         )
 
@@ -21,6 +22,7 @@ class Population (object):
         self.good += other.good
         self.sick += other.sick
         self.dead += other.dead
+        self.burnt += other.burnt
         self.done += other.done
         return self
 
@@ -29,6 +31,7 @@ class Population (object):
             self.good - other.good,
             self.sick - other.sick,
             self.dead - other.dead,
+            self.burnt - other.burnt,
             self.done - other.done,
         )
 
@@ -36,6 +39,7 @@ class Population (object):
         self.good -= other.good
         self.sick -= other.sick
         self.dead -= other.dead
+        self.burnt -= other.burnt
         self.done -= other.done
         return self
 

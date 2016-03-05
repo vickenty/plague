@@ -232,7 +232,7 @@ class Game (object):
                     return self
             else:
                 self.draw_game_over(disp, "FAIL")
-                self.newsflash = newsflash.Loss(census).draw(disp)
+                self.newsflash = newsflash.Loss(self.win_good_min_threshold, census).draw(disp)
                 return self
 
         for unit in self.units:
@@ -243,7 +243,7 @@ class Game (object):
         if self.selection:
             self.buttons.draw(disp)
 
-        self.draw_fps(disp)
+        self.draw_stats(disp)
 
         self.draw_cell_hover(disp)
 
@@ -260,8 +260,11 @@ class Game (object):
     def draw_text(self, targ, text, pos):
         self.font.render(targ, text, pos)
 
-    def draw_fps(self, targ):
-        self.draw_text(targ, "%.2f" % self.clock.get_fps(), (220, 2))
+    def draw_stats(self, targ):
+        curr_time = self.frame / FRAMES_PER_SECOND
+        self.time_to_cure = self.win_duration_sec - curr_time
+        self.draw_text(targ, "ttl: %.0f" % self.time_to_cure, (210, 2))
+        self.draw_text(targ, "save: %.0f" % self.win_good_min_threshold, (200, 12))
 
     def draw_population(self, targ, pop):
         if pop is None:
@@ -279,8 +282,7 @@ class Game (object):
             return
 
         if self.frame >= self.next_newsflash and pop is not None:
-            curr_time = self.frame / FRAMES_PER_SECOND
-            self.newsflash = newsflash.Random(curr_time, pop, self.win_duration_sec)
+            self.newsflash = newsflash.Random(pop, self.time_to_cure)
             self.next_newsflash = self.frame + random.randint(1 * FRAMES_PER_SECOND, 5 * FRAMES_PER_SECOND)
 
     def draw_cell_hover(self, targ):
