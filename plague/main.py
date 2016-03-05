@@ -2,6 +2,7 @@ from pyg import pygame
 from pyg.locals import *
 import game
 import mouse
+import data
 
 from constants import *
 
@@ -19,6 +20,7 @@ def main(init_mode=game.Game):
 
     disp = pygame.display.set_mode(size, DOUBLEBUF)
     temp = pygame.Surface((SCREEN_W, SCREEN_H))
+    uibg = data.load_image("uibg.png")
 
     mode = init_mode()
 
@@ -31,6 +33,7 @@ def main(init_mode=game.Game):
                 mode.handle_click(ev)
 
         temp.fill(SCREEN_BG)
+        temp.blit(uibg, (0, GRID_MAX_H * GRID_H + 1))
 
         mode = mode.update(temp)
         mouse.draw(temp)
