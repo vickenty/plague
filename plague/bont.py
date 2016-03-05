@@ -11,6 +11,9 @@ class Bont (object):
             targ.blit(self.image, (tx + i * self.w, ty), (x, y, self.w, self.h))
         return tx + i * self.w
 
+    def get_width(self, text):
+        return len(text) * self.w
+
     def render_wrap(self, targ, text, (tx, ty), maxx=150):
         x = tx
         for word in text.split(" "):

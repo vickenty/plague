@@ -15,9 +15,12 @@ import mouse
 import bont
 import effects
 import sim
+import title
 from music import music
 from constants import *
 
+BACK_TO_MENU = "Click anywhere to go back to main menu."
+TO_NEXT_LEVEL = "Click anywhere to proceed to next level."
 
 class Game (object):
     text_color = (255, 255, 255)
@@ -223,17 +226,19 @@ class Game (object):
 
         if self.over is not None:
             if self.over:
-                self.draw_game_over(disp, "SUCCESS")
+                self.draw_game_over(disp, "SUCCESS", TO_NEXT_LEVEL if self.model.conf.next_level else BACK_TO_MENU)
+                    
                 self.newsflash = newsflash.Victory(census).draw(disp)
                 if self.final_click:
                     n = self.model.next_level()
                     if n is not None:
                         return Game(n)
-                    return self
+                    return title.Title()
             else:
-                self.draw_game_over(disp, "FAIL")
-                self.newsflash = newsflash.Loss(self.win_good_min_threshold, census).draw(disp)
                 return self
+                self.draw_game_over(disp, "GAME OVER", BACK_TO_MENU)
+                self.newsflash = newsflash.Loss(self.win_good_min_threshold, census).draw(disp)
+                return self if not self.final_click else title.Title()
 
         for unit in self.units:
             if not self.paused:
@@ -251,11 +256,14 @@ class Game (object):
 
         return self
 
-    def draw_game_over(self, targ, text):
+    def draw_game_over(self, targ, text, subtext):
         t = self.over_font.render(text, True, self.text_color)
         w, h = t.get_size()
         sw, sh = SCREEN_W, SCREEN_H - 40
         targ.blit(t, (sw / 2 - w / 2, sh / 2 - h / 2))
+
+        w = self.font.get_width(subtext)
+        self.font.render(targ, subtext, (sw / 2 - w / 2, sh / 2 + h))
 
     def draw_text(self, targ, text, pos):
         self.font.render(targ, text, pos)
