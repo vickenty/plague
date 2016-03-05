@@ -111,7 +111,6 @@ class Victory(Base):
 
     def __init__(self, pop):
         super(Victory, self).__init__()
-        print self.font
         self.face = data.load_image("faces/6p.png")
         self.pop = pop
         self.text = self.compute_news()
