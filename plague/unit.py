@@ -22,6 +22,7 @@ class Unit (object):
         self.is_blocking = False
         self.model = model
         self.scream_sample = data.load_sample("aaaargh.wav")
+        self.scream_sample.set_volume(0.7)
 
     def set_command(self, cmd, *args):
         impl = getattr(self, "cmd_" + cmd)
