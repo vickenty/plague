@@ -27,9 +27,6 @@ class Base (object):
         targ.blit(self.face, self.face_pos)
         self.font.render(targ, self.name, self.name_pos)
         self.font.render_wrap(targ, self.text, self.text_pos, self.text_maxx)
-        if not self.prompt_sample_played:
-            self.prompt_sample_played = True
-            self.prompt_sample.play()
 
 class Unit (Base):
     name = "DOCTOR"
@@ -114,6 +111,9 @@ class LevelMessage (Base):
         if self.finished:
             self.finished_cb()
 
+        if not self.prompt_sample_played:
+            self.prompt_sample_played = True
+            self.prompt_sample.play()
 
 class Victory(Base):
     name = "GAME OVER"
