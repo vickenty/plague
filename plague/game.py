@@ -106,6 +106,7 @@ class Game (object):
 
         self.font = bont.Tiny()
         self.news_font = data.load_font(*NEWS_FONT)
+        self.over_font = data.load_font(*OVER_FONT)
         self.selection = None
         self.need_destination = False
         self.pending_cmd = None
@@ -251,9 +252,11 @@ class Game (object):
 
         if self.over is not None:
             if self.over:
+                self.draw_game_over(disp, "SUCCESS")
                 newsflash.Victory(census).draw(disp)
                 return self
             else:
+                self.draw_game_over(disp, "FAIL")
                 newsflash.Loss(census).draw(disp)
                 return self
 
@@ -272,6 +275,12 @@ class Game (object):
         self.draw_newsflash(disp, census)
 
         return self
+
+    def draw_game_over(self, targ, text):
+        t = self.over_font.render(text, True, self.text_color)
+        w, h = t.get_size()
+        sw, sh = SCREEN_W, SCREEN_H - 40
+        targ.blit(t, (sw / 2 - w / 2, sh / 2 - h / 2))
 
     def draw_text(self, targ, text, pos):
         self.font.render(targ, text, pos)

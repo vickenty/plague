@@ -14,3 +14,4 @@ REAP_FACTOR = 0.01
 GAME_NAME = "Life"
 SCREEN_BG = 64, 64, 64
 STICK_HOVER_INFO_TO_CELL = False
+OVER_FONT = ("dejavu-sans.ttf", 20)

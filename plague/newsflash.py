@@ -107,7 +107,8 @@ class LevelMessage (Base):
 
 
 class Victory(Base):
-    name = "ADVISOR"
+    name = "GAME OVER"
+
     def __init__(self, pop):
         super(Victory, self).__init__()
         print self.font
@@ -120,6 +121,7 @@ class Victory(Base):
 
 
 class Loss(Victory):
-    name = "ADVISOR"
+    name = "GAME OVER"
+
     def compute_news(self):
         return "Our country is doomed!"
