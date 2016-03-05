@@ -1,11 +1,12 @@
 from pyg import pygame
 from constants import *
 import data
-
+import anim
 
 class Unit (object):
     speed = 0.02
     selection_color = (255, 255, 0)
+    idle_seq = "idle"
 
     def __init__(self, model, x, y):
         self.x = x
@@ -16,8 +17,7 @@ class Unit (object):
             self.rect.w -= 1
             self.rect.h -= 1
         self.command = self.cmd_idle, ()
-        self.sprite_idle = data.load_image("unit.png")
-        self.sprite_block = data.load_image("block.png")
+        self.anim = anim.Anim("unit.cfg", self.idle_seq, self.x, self.y)
         self.is_moving = False
         self.is_blocking = False
         self.model = model
@@ -34,8 +34,9 @@ class Unit (object):
 
         self.is_moving = True
 
-        dx = tx - self.x
-        dy = ty - self.y
+        dx = self.move_dx = tx - self.x
+        dy = self.move_dy = ty - self.y
+
         dl = (dx ** 2 + dy ** 2) ** 0.5
         if dl > self.speed:
             dx *= self.speed / dl
@@ -76,15 +77,23 @@ class Unit (object):
         cmd(*args)
         self.rect.x = int(self.x * GRID_W)
         self.rect.y = int(self.y * GRID_H)
+        self.anim.set_pos(self.rect.topleft)
+        self.anim.update()
 
     def draw(self, targ, selected):
         cmd, _ = self.command
         if cmd == self.cmd_block:
-            sprite = self.sprite_block
+            self.anim.set_seq("block")
+        elif cmd == self.cmd_move:
+            if abs(self.move_dx) > abs(self.move_dy):
+                self.anim.set_seq("r" if self.move_dx > 0 else "l")
+            else:
+                self.anim.set_seq("d" if self.move_dy > 0 else "u")
         else:
-            sprite = self.sprite_idle
+            self.anim.set_seq(self.idle_seq)
 
-        targ.blit(sprite, self.rect.topleft)
+        self.anim.set_pos(self.rect.topleft)
+        self.anim.draw(targ)
 
         if selected:
             pygame.draw.rect(targ, self.selection_color, self.rect, 1)

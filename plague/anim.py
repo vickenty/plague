@@ -16,16 +16,31 @@ class Anim (pygame.sprite.Sprite):
             self.frame_w,
             self.frame_h,
         )
-        
+
+        self.delay = conf.get("delay", 0)
+        self.time = self.delay # force first update
+
+        self.seq = None
         self.set_seq(seq)
         self.update()
 
+    def set_pos(self, pos):
+        self.rect.topleft = pos
+
     def set_seq(self, seq):
-        self.frames = itertools.cycle(self.conf["frames"][seq])
+        if seq != self.seq:
+            self.frames = itertools.cycle(self.conf["frames"][seq])
+            self.seq = seq
 
     def update(self):
-        fx, fy = next(self.frames)
-        self.image = self.sheet.subsurface((fx, fy, self.frame_w, self.frame_h))
+        self.time += 1
+        if self.time > self.delay:
+            self.time = 0
+            fx, fy = next(self.frames)
+            self.image = self.sheet.subsurface((fx, fy, self.frame_w, self.frame_h))
+
+    def draw(self, targ):
+        targ.blit(self.image, self.rect.topleft)
 
 if __name__ == '__main__':
     from pyg import pygame
