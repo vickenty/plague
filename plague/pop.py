@@ -45,7 +45,6 @@ class Population (object):
 
     def reap(self, factor):
         reaped = self.dead * factor
-        print "Reaped: %.2f / %.2f" % (reaped, self.dead)
         self.dead -= reaped
 
     def burn(self, factor):

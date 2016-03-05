@@ -65,8 +65,6 @@ class Map(object):
 
             cell.nview = cell.view + self.tile_suffix[bits & cell.sprite_mask]
 
-        print self.width, self.height
-
         self.init()
 
     def init(self):

@@ -11,7 +11,6 @@ class Base (object):
     text_maxx = 203
 
     def __init__(self):
-        print "base init"
         self.font = bont.Tiny()
         self.show = 90
         self.finished = False
