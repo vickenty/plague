@@ -16,6 +16,9 @@ class Config (object):
         self.time = time
         del data["time"]
 
+        self.units = data["units"]
+        del data["units"]
+
         self.cell = data
 
 

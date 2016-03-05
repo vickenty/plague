@@ -68,16 +68,10 @@ class Game (object):
     def __init__(self):
         self.model = sim.Map("level1")
 
-        self.units = [
-            unit.Unit(self.model, self.model.width // 2, self.model.height // 2),
-            unit.Unit(self.model, self.model.width // 3, self.model.height // 3),
-        ]
+        self.units = [unit.Unit(self.model, x, y) for x, y in self.model.conf.units]
 
         self.all_effects = pygame.sprite.Group()
         self.individual_effects = defaultdict(pygame.sprite.Group)
-
-        self.units[0].set_command("move", 1, 1, ("idle",))
-        self.units[1].set_command("move", 3, 12, ("idle",))
 
         self.renderer = render.Renderer()
         self.renderer.draw(self.model)
