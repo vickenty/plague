@@ -2,6 +2,7 @@ from collections import defaultdict
 
 from pyg import pygame
 from pyg.locals import *
+import itertools
 import random
 import re
 
@@ -92,7 +93,7 @@ class Game (object):
         self.final_click = False
 
         self.voice_chan = None
-        self.select_voice_iter = iter(self.select_voices)
+        self.select_voice_iter = itertools.cycle(self.select_voices)
 
         music.enqueue("minor1")
 
@@ -190,7 +191,7 @@ class Game (object):
         if self.selection:
             if not self.voice_chan or not self.voice_chan.get_busy():
                 if self.selection != self.last_selection:
-                    self.select_voice_iter = iter(self.select_voices)
+                    self.select_voice_iter = itertools.cycle(self.select_voices)
                 self.voice_chan = data.load_sample(next(self.select_voice_iter)).play()
                 self.last_selection = self.selection
 
