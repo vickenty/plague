@@ -70,6 +70,7 @@ class Game (object):
 
         self.over = None
         self.paused = False
+        self.final_click = False
 
         music.enqueue("minor1")
 
@@ -137,6 +138,10 @@ class Game (object):
     def handle_click(self, ev):
         mx, my = ev.pos
         pos = mx // SCALE_FACTOR, my // SCALE_FACTOR
+
+        if self.over is not None:
+            self.final_click = True
+
         if self.paused:
             # unpause and finish newsflash
             if self.newsflash is not None:
@@ -220,10 +225,12 @@ class Game (object):
             if self.over:
                 self.draw_game_over(disp, "SUCCESS")
                 newsflash.Victory(census).draw(disp)
-                n = self.model.next_level()
-                if n is not None:
-                    return Game(n)
-                return self
+                self.paused = True
+                if self.final_click:
+                    n = self.model.next_level()
+                    if n is not None:
+                        return Game(n)
+                    return self
             else:
                 self.draw_game_over(disp, "FAIL")
                 newsflash.Loss(census).draw(disp)
