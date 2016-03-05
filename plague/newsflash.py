@@ -2,6 +2,7 @@ from random import choice
 import bont
 import data
 
+
 class Base (object):
     face_pos = 2, 164
     name_pos = 38, 164
@@ -42,6 +43,7 @@ class Unit (Base):
         self.text = self.messages[what]
         self.face = data.load_image(self.face_name)
 
+
 class Random (Base):
     name = "ADVISOR"
 
@@ -56,7 +58,18 @@ class Random (Base):
     def __init__(self, pop):
         super(Random, self).__init__()
         self.face = data.load_image("faces/6p.png")
+        self.pop = pop
         self.text = self.compute_news()
 
     def compute_news(self):
         return choice(self.news)
+
+
+class Victory(Random):
+    def compute_news(self):
+        return "You managed to save %d people!" % self.pop.good
+
+
+class Loss(Random):
+    def compute_news(self):
+        return "Our country is doomed!"

@@ -192,17 +192,33 @@ class Game (object):
         self.frame += 1
         self.clock.tick(FRAMES_PER_SECOND)
 
-        for _ in range(0, UPDATES_PER_FRAME):
-            dx, dy, new_dead, caught_fire = self.model.update()
-            self.individual_effects[dx, dy].update()
-            if new_dead > 0 and self.model.grid[dx, dy].view != "field":
-                Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
-            if caught_fire:
-                Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
+        won = None
+        census = self.model.census
+        if census is not None and census.good < 1.0 and census.sick < 1.0:
+            won = False
+        elif self.frame >= self.win_time:
+            won = True
+
+        if won is None:
+            for _ in range(0, UPDATES_PER_FRAME):
+                dx, dy, new_dead, caught_fire = self.model.update()
+                self.individual_effects[dx, dy].update()
+                if new_dead > 0 and self.model.grid[dx, dy].view != "field":
+                    Ghost(new_dead, dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
+                if caught_fire:
+                    Fire(dx * GRID_W, dy * GRID_H, self.all_effects, self.individual_effects[dx, dy])
 
         self.renderer.blit(disp)
 
         self.all_effects.draw(disp)
+
+        if won is not None:
+            if won:
+                newsflash.Victory(census).draw(disp)
+                return self
+            else:
+                newsflash.Loss(census).draw(disp)
+                return self
 
         for unit in self.units:
             unit.update()
@@ -211,17 +227,11 @@ class Game (object):
         if self.selection:
             self.buttons.draw(disp)
 
-        census = self.model.census
-
         self.draw_fps(disp)
 
-        self.draw_newsflash(disp, census)
         self.draw_cell_hover(disp)
 
-        if census is not None and census.good < 1.0 and census.sick < 1.0:
-            return GameOver(False, census)
-        elif self.frame >= self.win_time:
-            return GameOver(True, census)
+        self.draw_newsflash(disp, self.model.census)
 
         return self
 
@@ -269,21 +279,3 @@ class Game (object):
         if show_cell_stats:
             x, y = (cx, cy) if STICK_HOVER_INFO_TO_CELL else mpos
             self.hover_info.draw(x, y, cell.pop, targ)
-
-
-class GameOver(object):
-    def __init__(self, won, census):
-        self.census = census
-        self.won = won
-        self.clock = pygame.time.Clock()
-
-    def update(self, disp):
-        self.clock.tick(FRAMES_PER_SECOND)
-        if self.won:
-            disp.fill((0, 255, 0))
-        else:
-            disp.fill((255, 0, 0))
-        return self
-
-    def handle_click(self):
-        pass
