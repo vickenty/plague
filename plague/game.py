@@ -235,7 +235,6 @@ class Game (object):
                         return Game(n)
                     return title.Title()
             else:
-                return self
                 self.draw_game_over(disp, "GAME OVER", BACK_TO_MENU)
                 self.newsflash = newsflash.Loss(self.win_good_min_threshold, census).draw(disp)
                 return self if not self.final_click else title.Title()
