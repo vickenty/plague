@@ -16,7 +16,7 @@ class Base (object):
 
     def advance(self):
         self.show -= 1
-        self.finished = self.show <= 0
+        self.finished = self.show == 0
 
     def draw(self, targ):
         targ.blit(self.face, self.face_pos)
@@ -101,7 +101,7 @@ class LevelMessage (Base):
 
     def advance(self):
         self.show -= 1
-        self.finished = self.show <= 0
+        self.finished = self.show == 0
         if self.finished:
             self.finished_cb()
 
