@@ -7,6 +7,7 @@ class Base (object):
     name_pos = 38, 164
     text_pos = 38, 171
     finished = False
+    text_maxx = 203
 
     def __init__(self):
         print "base init"
@@ -21,11 +22,12 @@ class Base (object):
     def draw(self, targ):
         targ.blit(self.face, self.face_pos)
         self.font.render(targ, self.name, self.name_pos)
-        self.font.render_wrap(targ, self.text, self.text_pos)
+        self.font.render_wrap(targ, self.text, self.text_pos, self.text_maxx)
 
 class Unit (Base):
     name = "DOCTOR"
     face_name = "faces/doctor.png"
+    text_maxx = 150
 
     messages = {
         "prompt": "Ready to go.",
