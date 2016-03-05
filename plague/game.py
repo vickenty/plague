@@ -216,7 +216,7 @@ class Game (object):
         census = self.model.census
         self.update_music()
 
-        if not self.paused and not self.over:
+        if not self.paused and self.over is None:
             self.frame += 1
 
         self.clock.tick(FRAMES_PER_SECOND)
