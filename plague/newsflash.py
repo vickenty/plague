@@ -15,6 +15,10 @@ class Base (object):
         self.show = 150
         self.finished = False
 
+        self.prompt_sample_played = False
+        self.prompt_sample = data.load_sample("prompt.wav")
+        self.prompt_sample.set_volume(0.2)
+
     def advance(self):
         self.show -= 1
         self.finished = self.show == 0
@@ -23,6 +27,9 @@ class Base (object):
         targ.blit(self.face, self.face_pos)
         self.font.render(targ, self.name, self.name_pos)
         self.font.render_wrap(targ, self.text, self.text_pos, self.text_maxx)
+        if not self.prompt_sample_played:
+            self.prompt_sample_played = True
+            self.prompt_sample.play()
 
 class Unit (Base):
     name = "DOCTOR"
