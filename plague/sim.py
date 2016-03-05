@@ -37,6 +37,7 @@ class Map(object):
         self.census = None
         self.running_census = None
         self.conf = Config(data.load_json(name + ".cfg"))
+        self.name = name
 
         self.load(name)
 
