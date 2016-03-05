@@ -1,6 +1,7 @@
+data/dejavu-sans.ttf see data/dejavu-sans.txt for copyright information.
+
 data/tileset.png is based based on work of ThKaspar, http://opengameart.org/content/micro-tileset-overworld-and-dungeon
 data/flame-8.png is based ob torch animation by William.Thompsonj, http://opengameart.org/content/lpc-animated-torch
-data/dejavu-sans.ttf see data/dejavu-sans.txt for copyright information.
 data/font-tiny.png is based on work of Robey Pointer, http://opengameart.org/content/tom-thumb-tiny-ascii-font-3x5
 data/uibg.png is based on the work of Tiziana, http://opengameart.org/content/black-brick-wall-512px
 data/chars.png is based on the work of patvanmackelberg, http://opengameart.org/content/8x8-character-pack
@@ -8,3 +9,4 @@ data/chars.png is based on the work of patvanmackelberg, http://opengameart.org/
 Files in data/faces/* are copyright of CobraLad, http://opengameart.org/content/32x32-fantasy-portrait-set
 data/faces/doctor.png is based on work of CobraLad, http://opengameart.org/content/32x32-fantasy-portrait-set
 
+data/aaaargh.wav is based on samples from Horror Sound Effects Library, by Little Robot Sound Factory, http://opengameart.org/content/horror-sound-effects-library
