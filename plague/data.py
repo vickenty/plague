@@ -56,3 +56,8 @@ def load_image(name):
 def load_font(name, size):
     path = get_path(name)
     return pygame.font.Font(path, size)
+
+@memoize
+def load_sample(name):
+    path = get_path(name)
+    return pygame.mixer.Sound(path)
