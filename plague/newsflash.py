@@ -53,7 +53,7 @@ class Random (Base):
     stats = [
         "{dead} dead citizens have been reported, my lord",
         "My lord, we counted {dead} dead bodies to date",
-        "{sick} people called in sick, your majesty",
+        "{sick} people are suffering from plague, your majesty",
         "Your honour, as many as {sick} settlers are feeling unwell",
         "{good} people have no wellbeing complaints, your greatness",
         "Only {cure} seconds left to cure our kindgom, my lord",
