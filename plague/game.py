@@ -271,8 +271,7 @@ class Game (object):
         self.renderer.blit(disp)
         self.all_effects.draw(disp)
 
-        if self.over is None:
-            self.draw_stats(disp)
+        self.draw_stats(disp)
 
         self.draw_newsflash(disp, census)
 
