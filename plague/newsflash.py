@@ -51,14 +51,12 @@ class Random (Base):
     name = "ADVISOR"
 
     stats = [
-        "{dead} dead citizens have been report, my lord",
-        "My lord, we couted {dead} dead bodies to date",
+        "{dead} dead citizens have been reported, my lord",
+        "My lord, we counted {dead} dead bodies to date",
         "{sick} people called in sick, your majesty",
         "Your honour, as many as {sick} settlers are feeling unwell",
-        "{good} people have no wellbeing complains, your greatness",
-        "There are {good} people feeling well and on duty, my nobility",
+        "{good} people have no wellbeing complaints, your greatness",
         "Only {cure} seconds left to cure our kindgom, my lord",
-        "Your greatness, {cure} seconds to abolish the black curse",
     ]
     bad_news = [
         "There are dead bodies on the streets"
