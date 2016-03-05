@@ -137,11 +137,17 @@ class Music (object):
         self.next_preset = None
 
     def load(self):
-        for chan in self.channels:
-            chan.load()
-        self.loaded = True
+        try:
+            for chan in self.channels:
+                chan.load()
+            self.loaded = True
+        except:
+            print "Unable to load music files, you will hear no music. Sorry."
 
     def play(self):
+        if not self.loaded:
+            return
+
         for chan in self.channels:
             chan.play()
 
