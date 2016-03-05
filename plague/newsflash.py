@@ -11,12 +11,12 @@ class Base (object):
 
     def __init__(self):
         self.font = bont.Tiny()
-        self.show = 90
+        self.show = 150
         self.finished = False
 
     def advance(self):
         self.show -= 1
-        self.finished = self.show == 0
+        self.finished = self.show <= 0
 
     def draw(self, targ):
         targ.blit(self.face, self.face_pos)
@@ -101,7 +101,7 @@ class LevelMessage (Base):
 
     def advance(self):
         self.show -= 1
-        self.finished = self.show == 0
+        self.finished = self.show <= 0
         if self.finished:
             self.finished_cb()
 
