@@ -22,8 +22,10 @@ class Game (object):
     cell_highlight_image = pygame.Surface((GRID_W, GRID_H), pygame.SRCALPHA);
     cell_highlight_image.fill((0xff, 0xff, 0xff, 0x33), (0, 0, GRID_W, GRID_H))
 
-    def __init__(self, map):
+    def __init__(self, map, auto_progress=False):
         self.model = map
+
+        self.auto_progress = auto_progress
 
         self.units = [unit.Unit(self.model, x, y) for x, y in self.model.conf.units]
 
@@ -286,3 +288,8 @@ class Game (object):
             else:
                 # push the message off into the future
                 level_messages[game_time + 1] = message
+
+    def compute_next_level(self):
+        if not self.auto_progress:
+            return
+        pass

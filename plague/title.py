@@ -26,10 +26,10 @@ class Title (object):
         self.new_mode = self
 
     def new_tutorial(self):
-        self.new_mode = game.Game(sim.Map("tut0"))
+        self.new_mode = game.Game(sim.Map("tut0"), True)
 
     def new_game(self):
-        self.new_mode = game.Game(sim.Map("level1"))
+        self.new_mode = game.Game(sim.Map("level1"), False)
 
     def quit_game(self):
         self.new_mode = None
