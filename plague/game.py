@@ -192,7 +192,6 @@ class Game (object):
         if census is None:
             music.update(1.0)
         elif census.alive > 1.0:
-            print census.good / census.alive
             music.update(1 - min(1, max(0, census.good / census.alive)))
         else:
             music.update(0.0)
