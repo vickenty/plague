@@ -25,7 +25,7 @@ class Title (object):
             return build_level
 
         self.buttons = buttons.ButtonRegistry()
-        self.buttons.add_sprite_button("Level 1", play_level(1), 100, 160)
+        self.buttons.add_sprite_button("Level 1", play_level(1), 96, 160)
         self.buttons.add_sprite_button("Level 2", play_level(2), 150, 160)
         self.buttons.add_sprite_button("Level 3", play_level(3), 205, 160)
         self.buttons.add_sprite_button("Tutorial", self.new_tutorial, 150, 180)
